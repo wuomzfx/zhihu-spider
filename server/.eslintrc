@@ -1,5 +1,8 @@
 {
     "extends": "standard",
     "plugins": [
-    ]
+    ],
+    "rules": {
+        "no-new": 0
+    }
 }
