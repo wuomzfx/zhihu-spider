@@ -5,11 +5,15 @@
   "main": "index.js",
   "dependencies": {
     "cheerio": "0.22.0",
+    "glob": "7.1.1",
     "koa": "2.2.0",
     "koa-bodyparser": "4.2.0",
     "koa-router": "7.1.1",
+    "mongoose": "4.9.6",
+    "path": "0.12.7",
     "request": "2.81.0",
-    "request-promise-native": "1.0.3"
+    "request-promise-native": "1.0.3",
+    "util": "0.10.3"
   },
   "devDependencies": {
     "eslint": "3.19.0",
