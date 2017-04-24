@@ -4,6 +4,7 @@
   "description": "zhihu spider server",
   "main": "index.js",
   "dependencies": {
+    "cheerio": "0.22.0",
     "koa": "2.2.0",
     "koa-bodyparser": "4.2.0",
     "koa-router": "7.1.1",
