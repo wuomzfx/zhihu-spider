@@ -1,25 +1,18 @@
-const request = require('request-promise-native')
-// const cheerio = require('cheerio')
-const config = require('../config')
-const zhihuRoot = config.zhihu.root
-
-module.exports = {
+const service = require('../service/question')
+const App = require('./app')
+class Question extends App {
+  constructor () {
+    super()
+    this.create = this.create.bind(this)
+  }
   async create (ctx) {
-    const { url, title } = ctx.request.body
-    if (!url && !title) {
+    const { qid, title } = ctx.request.body
+    if (!qid && !title) {
+      console.log(this.show)
       ctx.body = '别瞎填'
+      return
     }
-    if (url) {
-      const rs = await request(`${zhihuRoot}/explore`).catch(err => {
-        return err
-      })
-      if (rs.error) {
-        ctx.body = rs.message
-        return
-      }
-      ctx.body = rs
-    } else {
-      ctx.body = title
-    }
+    ctx.body = await service.add(qid)
   }
 }
+module.exports = new Question()

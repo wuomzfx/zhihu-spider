@@ -4,7 +4,7 @@ module.exports = new mongoose.Schema({
     type: String,
     unique: false
   },
-  url: {
+  qid: {
     type: String,
     unique: true
   },

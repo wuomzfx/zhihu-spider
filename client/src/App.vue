@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <input type="text" v-model="question.url" placeholder="请输入问题url">
+    <input type="text" v-model="question.qid" placeholder="请输入问题Id">
     <button @click="addQuestion">添加</button>
   </div>
 </template>
@@ -10,7 +10,7 @@ export default {
   data () {
     return {
       question: {
-        url: null
+        qid: null
       }
     }
   },
