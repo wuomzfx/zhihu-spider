@@ -1,8 +1,15 @@
 const Koa = require('koa')
-const router = require('./app/router.js')
+const bodyParser = require('koa-bodyparser')
 const mongoose = require('./app/middleware/mongo')
 const path = require('path')
+const cors = require('koa2-cors')
+const router = require('./app/router.js')
+
 const app = new Koa()
+
+app.use(cors())
+app.use(bodyParser())
+
 app.use(mongoose({
   user: '',
   pass: '',
