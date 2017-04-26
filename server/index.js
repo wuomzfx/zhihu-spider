@@ -9,14 +9,13 @@ const app = new Koa()
 
 app.use(cors())
 app.use(bodyParser())
-
 app.use(mongoose({
   user: '',
   pass: '',
   host: '127.0.0.1',
   port: 27017,
   database: 'zhihu',
-  schemas: path.join(__dirname, '/app/model'),
+  schemas: path.resolve(__dirname, './app/model'),
   db: {
     native_parser: true
   }

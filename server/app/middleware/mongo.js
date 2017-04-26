@@ -15,7 +15,8 @@ var middleware = module.exports = options => {
   if (options.schemas) {
         // mode: schema
     db = mongoose.createConnection()
-    var schemas = options.schemas + (options.schemas.lastIndexOf('/') === (options.schemas.length - 1) ? '' : '/')
+    // var separator = options.schemas.lastIndexOf('/') >= 0 ? '/' : '\\'
+    var schemas = (options.schemas + (options.schemas.lastIndexOf('/') === (options.schemas.length - 1) ? '' : '/')).replace(/\\/g, '/')
     var files = glob.sync(schemas + '**/*.js')
     files.map(file => {
       var model = file

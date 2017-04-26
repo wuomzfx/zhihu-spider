@@ -8,6 +8,14 @@ module.exports = new mongoose.Schema({
     type: String,
     unique: true
   },
+  createTime: {
+    type: Date,
+    default: Date.now
+  },
+  lastSyncTime: {
+    type: Date,
+    default: Date.now
+  },
   isDeleted: {
     type: Boolean,
     default: false

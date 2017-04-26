@@ -1,8 +1,4 @@
 class App {
-  constructor () {
-    this.success = this.success.bind(this)
-    this.error = this.error.bind(this)
-  }
   success (ctx, data) {
     ctx.body = {
       success: true,
