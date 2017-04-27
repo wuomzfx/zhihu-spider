@@ -5,6 +5,10 @@ import App from './App'
 import router from './router'
 import axios from 'axios'
 import api from './api'
+import MuseUI from 'muse-ui'
+import 'muse-ui/dist/muse-ui.css'
+import 'muse-ui/dist/theme-light.css' // light, dark, carbon, teal
+Vue.use(MuseUI)
 
 Vue.prototype.$http = axios
 Vue.prototype.api = api

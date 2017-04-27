@@ -7,5 +7,6 @@ const question = require('./controller/question')
 // router.get('/spider', action.spider)
 
 router.post('/api/question', question.create)
+router.get('/api/question', question.get)
 
 module.exports = router

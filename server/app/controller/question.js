@@ -7,7 +7,11 @@ class Question extends App {
       super.error(ctx, '别瞎填')
       return
     }
-    ctx.body = await service.add(ctx, qid)
+    ctx.body = await service.add(qid)
+  }
+  async get (ctx) {
+    const {page = 1, size = 10} = ctx.request.body
+    ctx.body = await service.get(page, size)
   }
 }
 module.exports = new Question()

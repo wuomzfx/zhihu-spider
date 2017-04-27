@@ -1,33 +1,20 @@
 <template>
   <div id="app">
-    <input type="text" v-model="question.qid" placeholder="请输入问题Id">
-    <button @click="addQuestion">添加</button>
+    <app-header></app-header>
+    <div class="app-content">
+      <router-view></router-view>
+    </div>
+    <app-footer></app-footer>
   </div>
 </template>
 
 <script>
+import AppHeader from './components/Header'
+import AppFooter from './components/Footer'
 export default {
-  data () {
-    return {
-      question: {
-        qid: null
-      }
-    }
-  },
-  methods: {
-    addQuestion () {
-      this.$http.post(this.api.question, this.question).then(rs => {
-        console.log(rs)
-      })
-    }
+  components: {
+    AppHeader,
+    AppFooter
   }
 }
 </script>
-
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-</style>

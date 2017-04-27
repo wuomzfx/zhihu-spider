@@ -2,21 +2,50 @@ const request = require('request-promise-native')
 const cheerio = require('cheerio')
 const config = require('../config')
 const zhihuRoot = config.zhihu.root
+const QuestionModel = require('../model/question')
+const DataModel = require('../model/data')
 
 module.exports = {
-  async add (ctx, qid) {
-    const { title } = await this.getData(qid)
+  async get (page, size) {
+    const cond = {
+      isDeleted: false
+    }
+    const qs = await QuestionModel
+                              .find(cond)
+                              .sort({createTime: -1})
+                              .skip((page - 1) * size)
+                              .limit(size)
+                              .exec()
+    const qids = qs.map(q => q.qid)
+    const data = await DataModel.find({
+      'qid': {$in: qids}
+    }).exec()
+    return {
+      qids: qids,
+      questions: qs,
+      data: data
+    }
+  },
+  async add (qid) {
+    const { title, data } = await this.getData(qid)
     const question = {
       qid: qid,
       title: title
     }
-    console.log('123123')
-    console.log(ctx.model('question'))
-    const Q = ctx.model('question')
-    // console.log(Q)
-    const q = new Q(question)
-    await q.save()
-    return title
+    const q = new QuestionModel(question)
+    const d = new DataModel(data)
+    try {
+      await d.save()
+      await q.save()
+      return {
+        success: true
+      }
+    } catch (err) {
+      return {
+        success: false,
+        msg: err
+      }
+    }
   },
   async getData (qid) {
     const rs = await request(`${zhihuRoot}/question/${qid}`).catch(err => {
