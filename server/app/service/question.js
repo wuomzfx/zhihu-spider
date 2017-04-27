@@ -10,21 +10,40 @@ module.exports = {
     const cond = {
       isDeleted: false
     }
-    const qs = await QuestionModel
+    let qs = await QuestionModel
                               .find(cond)
                               .sort({createTime: -1})
                               .skip((page - 1) * size)
                               .limit(size)
+                              .lean()
                               .exec()
+    const data2 = [1, 2, 3, 4]
+    console.log(typeof (data2))
+    // qs = qs.toArray()
     const qids = qs.map(q => q.qid)
-    const data = await DataModel.find({
-      'qid': {$in: qids}
-    }).exec()
-    return {
-      qids: qids,
-      questions: qs,
-      data: data
-    }
+    const data = await DataModel.aggregate([
+      { $match: {
+        qid: {$in: qids}
+      }},
+      { $sort: {createTime: -1} },
+      { $group: {
+        _id: '$qid',
+        followers: {$first: '$followers'},
+        readers: {$first: '$readers'},
+        answers: {$first: '$answers'},
+        createTime: {$first: '$createTime'}
+      }}
+    ]).exec()
+    const dataMap = {}
+    data.forEach(d => {
+      dataMap[d._id] = d
+    })
+    // qqq = JSON.parse(JSON.stringify(qs))
+    qs.forEach((q, k) => {
+      q.data = dataMap[q.qid]
+      // console.log(q.data)
+    })
+    return qs
   },
   async add (qid) {
     const { title, data } = await this.getData(qid)

@@ -1,5 +1,7 @@
 <template>
-  <mu-appbar title="什么值得答"></mu-appbar>
+  <mu-appbar title="问题列表">
+    <!-- <mu-text-field icon="search" class="appbar-search-field"  slot="right" hintText="请输入搜索内容"/> -->
+  </mu-appbar>
 </template>
 
 <script>

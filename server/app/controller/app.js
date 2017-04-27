@@ -8,7 +8,7 @@ class App {
   error (ctx, error) {
     ctx.body = {
       success: false,
-      error: error
+      msg: error
     }
   }
 }
