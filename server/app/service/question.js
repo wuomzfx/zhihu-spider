@@ -17,9 +17,6 @@ module.exports = {
                               .limit(size)
                               .lean()
                               .exec()
-    const data2 = [1, 2, 3, 4]
-    console.log(typeof (data2))
-    // qs = qs.toArray()
     const qids = qs.map(q => q.qid)
     const data = await DataModel.aggregate([
       { $match: {
