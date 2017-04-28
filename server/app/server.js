@@ -3,6 +3,7 @@ const bodyParser = require('koa-bodyparser')
 const cors = require('koa2-cors')
 const router = require('./router')
 const config = require('./config')
+require('./schedule')
 
 const app = new Koa()
 
