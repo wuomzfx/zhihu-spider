@@ -1,10 +1,9 @@
 <template>
   <div>
-    <!-- <input type="text" v-model="question.qid" placeholder="请输入问题Id">
-    <button @click="addQuestion">添加</button> -->
+    <mu-appbar title="问题列表"></mu-appbar>
     <div class="question-list">
       <mu-list>
-        <mu-list-item v-for="q in questions" key="q._id" :title="q.title" class="question">
+        <mu-list-item v-for="q in questions" key="q._id" :title="q.title" class="question" @click.native="showData(q)">
           <div class="overview">
             <span class="star"><mu-icon :size="16" value="star"/>{{q.data.followers}}</span>
             <span class="answer"><mu-icon :size="16" value="question_answer"/>{{q.data.answers}}</span>
@@ -38,12 +37,16 @@ export default {
   },
   methods: {
     getQuestion () {
-      this.$http.get(this.api.question, this.query).then(rs => {
+      this.$api.questionList(this.query).then(rs => {
         this.questions = this.questions.concat(rs.data)
       })
+    },
+    showData (question) {
+      this.$router.push(`/data/${question.qid}`)
     }
   },
   mounted () {
+    console.log('123')
     this.getQuestion()
   }
 }

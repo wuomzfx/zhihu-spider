@@ -1,6 +1,6 @@
 const Router = require('koa-router')
 const router = new Router()
-// const action = require('./controller/app')
+const data = require('./controller/data')
 const question = require('./controller/question')
 
 // router.get('/', action.index)
@@ -8,5 +8,7 @@ const question = require('./controller/question')
 
 router.post('/api/question', question.create)
 router.get('/api/question', question.get)
+
+router.get('/api/data/question', data.question)
 
 module.exports = router

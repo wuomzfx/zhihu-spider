@@ -19,7 +19,7 @@ export default new Router({
       component: Explore
     },
     {
-      path: '/data',
+      path: '/data/:qid',
       name: 'Data',
       component: Data
     }

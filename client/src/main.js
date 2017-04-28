@@ -11,7 +11,7 @@ import 'muse-ui/dist/theme-light.css' // light, dark, carbon, teal
 Vue.use(MuseUI)
 
 Vue.prototype.$http = axios
-Vue.prototype.api = api
+Vue.prototype.$api = api
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
