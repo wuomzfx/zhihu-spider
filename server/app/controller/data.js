@@ -4,7 +4,7 @@ const App = require('./app')
 
 class Data extends App {
   async question (ctx) {
-    const { qid } = ctx.request.query
+    const { qid } = ctx.params
     const question = await QuestionModel.findOne({
       qid: qid
     }).exec()

@@ -8,7 +8,8 @@ const question = require('./controller/question')
 
 router.post('/api/question', question.create)
 router.get('/api/question', question.get)
+router.get('/api/question/stop/:qid', question.stop)
 
-router.get('/api/data/question', data.question)
+router.get('/api/data/question/:qid', data.question)
 
 module.exports = router

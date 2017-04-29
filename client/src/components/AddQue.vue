@@ -26,7 +26,7 @@ export default {
   },
   methods: {
     addQuestion () {
-      this.$api.addQuestion(this.api.question, this.question).then(rs => {
+      this.$api.addQuestion(this.question).then(rs => {
         if (rs.data.success) {
 
         } else {

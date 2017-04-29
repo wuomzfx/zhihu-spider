@@ -5,7 +5,8 @@ const DataModel = require('../model/data')
 module.exports = {
   async get (page, size) {
     const cond = {
-      isDeleted: false
+      isDeleted: false,
+      status: 1
     }
     const qs = await QuestionModel
                               .find(cond)
@@ -59,5 +60,22 @@ module.exports = {
         msg: err
       }
     }
+  },
+  async stop (qid) {
+    return QuestionModel.findOne({
+      qid: qid
+    }).update({
+      status: 0,
+      updateTime: new Date()
+    })
+  },
+  async reActive (qid) {
+    return QuestionModel.findOne({
+      qid: qid
+    }).update({
+      status: 1,
+      updateTime: new Date(),
+      expiredTime: new Date(+new Date() + 7 * 24 * 60 * 60 * 1000)
+    })
   }
 }

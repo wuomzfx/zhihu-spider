@@ -13,5 +13,14 @@ class Question extends App {
     const {page = 1, size = 10} = ctx.request.body
     ctx.body = await service.get(page, size)
   }
+  async stop (ctx) {
+    const { qid } = ctx.params
+    ctx.body = await service.stop(qid)
+  }
+
+  async reActive (ctx) {
+    const { qid } = ctx.params
+    ctx.body = await service.reActive(qid)
+  }
 }
 module.exports = new Question()

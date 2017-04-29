@@ -1,9 +1,7 @@
 <template>
   <div id="app">
     <!-- <app-header></app-header> -->
-    <div class="app-content">
-      <router-view></router-view>
-    </div>
+    <router-view></router-view>
     <app-footer></app-footer>
   </div>
 </template>
@@ -18,3 +16,12 @@ export default {
   }
 }
 </script>
+<style>
+.app-content {
+  position: fixed;
+  width: 100%;
+  top: 56px;
+  bottom: 56px;
+  overflow-y: scroll;
+}
+</style>

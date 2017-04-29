@@ -9,29 +9,39 @@
 
 <script>
 import Chart from 'chart.js'
-// import moment from 'moment'
+import moment from 'moment'
 export default {
   props: ['title'],
   data () {
     return {
-      lineConfig: {
-        fill: false,
-        lineTension: 0.1,
-        backgroundColor: 'rgba(75,192,192,0.4)',
-        borderColor: 'rgba(75,192,192,1)',
-        borderCapStyle: 'butt',
-        borderDash: [],
-        borderDashOffset: 0.0,
-        borderJoinStyle: 'round',
-        pointBorderColor: 'rgba(75,192,192,1)',
-        pointBackgroundColor: '#fff',
-        pointRadius: 0
-      },
       question: {},
-      qData: []
+      qData: [],
+      color: {
+        readers: '75,192,192', // 绿色
+        answers: '30,150,243', // 蓝色
+        followers: '255,167,38' // 橙色
+      }
     }
   },
   methods: {
+    getLineConfig (label, data) {
+      this.colorIdx ++
+      return {
+        label: label,
+        data: data,
+        fill: false,
+        lineTenstion: 0.4,
+        backgroundColor: `rgba(${this.color[label]},0.4)`,
+        borderColor: `rgba(${this.color[label]},1)`,
+        borderCapStyle: 'round',
+        borderJoinStyle: 'round',
+        spanGaps: false,
+        yAxisID: label,
+        pointRadius: 0
+        // pointBorderColor: 'rgba(75,192,192,1)',
+        // pointBackgroundColor: '#fff'
+      }
+    },
     getData () {
       this.$api.questionData(this.$route.params.qid).then(rs => {
         this.question = rs.data.question
@@ -42,76 +52,98 @@ export default {
     renderData () {
       const ctx = document.getElementById('chart')
       const labels = []
-      const f = []
-      const a = []
-      const r = []
+      const fieldData = {
+        readers: [],
+        answers: [],
+        followers: []
+      }
+      const fields = Object.keys(fieldData)
       this.qData.forEach((d, k) => {
-        // if (k % 3 === 0) {
-        //   labels.push(moment(d.createTime).format('h:mm'))
-        // }
-        // labels.push(moment(d.createTime).format('MMM YYYY'))
         labels.push(d.createTime)
-        f.push(d.followers)
-        a.push(d.answers)
-        r.push(d.readers)
+        fields.forEach(f => {
+          fieldData[f].push(d[f])
+        })
+      })
+      const datasets = fields.map(f => {
+        return this.getLineConfig(f, fieldData[f])
       })
       const data = {
         labels: labels,
-        datasets: [
-          this.getFollowers(f),
-          this.getAnswers(a),
-          this.getReaders(r)
-        ]
+        datasets: datasets
       }
       new Chart(ctx, {
         type: 'line',
         data: data,
-        options: {
-          scales: {
-            yAxes: [{
-              // stacked: true
-            }],
-            xAxes: [{
-              time: {
-                unit: 'hour'
-              },
-              type: 'time'
-            }]
+        options: this.buildChartOption(fields)
+      })
+    },
+    buildChartOption (fields) {
+      const yAxes = fields.map(id => {
+        const config = {
+          display: true,
+          // stacked: true,
+          scaleLabel: {
+            position: top,
+            display: true
+          },
+          id: id,
+          ticks: {
+            fontColor: `rgb(${this.color[id]})`
           }
         }
+        if (id === 'answers') {
+          config.position = 'right'
+          config.gridLines = {
+            display: false
+          }
+        }
+        if (id === 'readers') {
+          config.display = false
+        }
+        return config
       })
-      // window.console.log(c)
-    },
-    renderFollows (data) {
-
-    },
-    getFollowers (data) {
-      const d = {
-        data,
-        label: '关注人数',
-        ...this.lineConfig
+      return {
+        // responsiveAnimationDuration: 300,
+        tooltips: {
+          mode: 'index',
+          callbacks: {
+            title: function (item) {
+              return moment(item[0].xLabel).format('YYYY-MM-DD HH:mm')
+            }
+          },
+          intersect: false
+        },
+        hover: {
+          mode: 'nearest',
+          intersect: true
+        },
+        title: {
+          display: true,
+          padding: 20,
+          text: '数据图'
+        },
+        legend: {
+          labels: {
+            padding: 25,
+            usePointStyle: true
+          },
+          position: 'bottom'
+        },
+        scales: {
+          yAxes: yAxes,
+          xAxes: [{
+            time: {
+              // unit: 'hour',
+              displayFormats: {
+                minute: 'HH:mm',
+                hour: 'HH:mm',
+                day: 'ddd'
+              }
+            },
+            type: 'time'
+          }]
+        }
       }
-      d.borderColor = 'rgba(66,165,245,1)'
-      d.backgroundColor = 'rgba(66,165,245,0.4)'
-      return d
-    },
-    getAnswers (data) {
-      const d = {
-        data,
-        label: '回答人数',
-        ...this.lineConfig
-      }
-      d.borderColor = 'rgba(255,167,38,1)'
-      d.backgroundColor = 'rgba(255,167,38,0.4)'
-      return d
-    },
-    getReaders (data) {
-      const d = {
-        data,
-        label: '阅读人数',
-        ...this.lineConfig
-      }
-      return d
     }
   },
   mounted () {
@@ -121,10 +153,7 @@ export default {
 </script>
 
 <style>
-/*.data-page .mu-appbar-title {
-  white-space: normal;
-}*/
 #chart-box {
-  padding: 10px 20px;
+  padding: 10px;
 }
 </style>
