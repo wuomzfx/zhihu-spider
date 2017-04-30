@@ -21,6 +21,8 @@ module.exports = {
       })
     })
     await Promise.all(promises)
-    DataModel.create(dataArr)
+    if (dataArr.length > 0) {
+      DataModel.create(dataArr)
+    }
   }
 }
