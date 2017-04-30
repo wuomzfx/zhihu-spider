@@ -15,7 +15,9 @@ module.exports = {
     const promises = ques.map(q => {
       return spider.getData(q.qid).then(rs => {
         // console.log(rs)
-        dataArr.push(rs.data)
+        if (rs.success) {
+          dataArr.push(rs.data)
+        }
       })
     })
     await Promise.all(promises)
