@@ -5,7 +5,6 @@
   "main": "index.js",
   "dependencies": {
     "cheerio": "0.22.0",
-    "glob": "7.1.1",
     "koa": "2.2.0",
     "koa-bodyparser": "4.2.0",
     "koa-router": "7.1.1",

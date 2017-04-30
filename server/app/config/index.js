@@ -1,4 +1,4 @@
-const port = process.env.NODE_ENV === 'prod' ? '3000' : '80'
+const port = process.env.NODE_ENV === 'prod' ? '80' : '3000'
 module.exports = {
   zhihu: {
     root: 'https://www.zhihu.com'
