@@ -3,11 +3,8 @@ const QuestionModel = require('../model/question')
 const DataModel = require('../model/data')
 
 module.exports = {
-  async get (page, size) {
-    const cond = {
-      isDeleted: false,
-      status: 1
-    }
+  async get (page, size, cond = {}) {
+    cond.isDeleted = cond.isDeleted | false
     const qs = await QuestionModel
                               .find(cond)
                               .sort({createTime: -1})
@@ -33,15 +30,17 @@ module.exports = {
     data.forEach(d => {
       dataMap[d._id] = d
     })
-    // qqq = JSON.parse(JSON.stringify(qs))
     qs.forEach((q, k) => {
       q.data = dataMap[q.qid]
-      // console.log(q.data)
     })
     return qs
   },
   async add (qid) {
-    const { title, data } = await spider.getData(qid)
+    const rs = await spider.getData(qid)
+    if (!rs.success) {
+      return rs
+    }
+    const { title, data } = rs
     const question = {
       qid: qid,
       title: title
@@ -49,15 +48,18 @@ module.exports = {
     const q = new QuestionModel(question)
     const d = new DataModel(data)
     try {
-      await d.save()
-      await q.save()
+      const question = await q.save()
+      const qData = await d.save()
+      question.data = qData
       return {
-        success: true
+        success: true,
+        question
       }
     } catch (err) {
       return {
         success: false,
-        msg: err
+        status: 500,
+        msg: err.errmsg
       }
     }
   },

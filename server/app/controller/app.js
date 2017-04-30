@@ -1,4 +1,10 @@
 class App {
+  result (ctx, result) {
+    if (result.status) {
+      ctx.status = result.status
+    }
+    ctx.body = result
+  }
   success (ctx, data) {
     ctx.body = {
       success: true,

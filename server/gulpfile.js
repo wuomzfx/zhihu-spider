@@ -13,7 +13,7 @@ gulp.task('eslint', () => lintFiles(['**/*.js', '!node_modules/**']))
 
 gulp.task('eslint_nodemon', ['eslint'], () => {
   return nodemon({
-    script: './index.js',
+    script: './app/server.js',
     tasks (changedFiles) {
       lintFiles(changedFiles)
       return []

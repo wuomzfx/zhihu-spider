@@ -26,11 +26,12 @@
     "gulp": "3.9.1",
     "gulp-eslint": "3.0.1",
     "gulp-nodemon": "2.2.1",
-    "nodemon": "1.11.0"
+    "nodemon": "1.11.0",
+    "pm2": "2.4.6"
   },
   "scripts": {
-    "start": "gulp",
-    "dev": "nodemon index.js",
+    "start": "pm2 start index.js",
+    "dev": "gulp",
     "lint": "eslint .",
     "fix": "eslint --fix ."
   },

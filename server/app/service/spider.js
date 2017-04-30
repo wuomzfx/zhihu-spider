@@ -11,13 +11,14 @@ module.exports = {
     if (rs.error) {
       return {
         success: false,
-        rs: rs,
-        url: `${zhihuRoot}/question/${qid}`
+        status: rs.statusCode,
+        msg: rs.message
       }
     }
     const $ = cheerio.load(rs)
     const NumberBoard = $('.NumberBoard-item .NumberBoard-value')
     return {
+      success: true,
       title: $('.QuestionHeader-title').text(),
       data: {
         qid: qid,
@@ -27,4 +28,5 @@ module.exports = {
       }
     }
   }
+  // async explore () {}
 }

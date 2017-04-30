@@ -9,10 +9,11 @@
       <span class="reader"><mu-icon :size="16" value="remove_red_eye"/>{{question.data.readers}}</span>
     </div>
     <div class="control" slot="right">
-      <mu-raised-button label="cancel"
+      <mu-raised-button label="取消"
                         @click.native="stopCrawling(question, $event)"
                         v-if="question.status === 1"/>
-      <mu-raised-button label="active"
+      <mu-raised-button label="跟踪"
+                        backgroundColor="#2196f3"
                         @click.native="reCrawling(question, $event)"
                         v-else/>
       <!-- <mu-switch :value="q.status === 1" @click.native="stopCrawling(q)"/> -->
@@ -29,25 +30,21 @@ export default {
     },
     stopCrawling (q, e) {
       e.stopPropagation()
-      window.console.log(q)
-      q.status = 0
-      // this.$api.stopCrawling(q.qid).then(rs => {
-      //   this.questions.find()
-      // }).catch(err => {
-      //   window.console.log(err)
-      //   window.alert('出错了，看日志去')
-      // })
+      this.$api.stopCrawling(q.qid).then(rs => {
+        q.status = 0
+      }).catch(err => {
+        window.console.log(err)
+        window.alert('出错了，看日志去')
+      })
     },
     reCrawling (q, e) {
       e.stopPropagation()
-      window.console.log(q)
-      q.status = 1
-      // this.$api.reCrawling(q.qid).then(rs => {
-      //   this.questions.find()
-      // }).catch(err => {
-      //   window.console.log(err)
-      //   window.alert('出错了，看日志去')
-      // })
+      this.$api.reCrawling(q.qid).then(rs => {
+        q.status = 1
+      }).catch(err => {
+        window.console.log(err)
+        window.alert('出错了，看日志去')
+      })
     }
   }
 }
@@ -75,8 +72,8 @@ export default {
   margin-right: 2px;
 }
 .question .control .mu-raised-button {
-  width: 74px;
-  min-width: 74px;
+  width: 60px;
+  min-width: 60px;
 }
 .question .mu-raised-button-label {
   padding: 0;

@@ -22,6 +22,7 @@ export default {
   width: 100%;
   top: 56px;
   bottom: 56px;
+  -webkit-overflow-scrolling: touch;
   overflow-y: scroll;
 }
 </style>

@@ -1,0 +1,13 @@
+{
+  "name": "值得答",
+  "icons": [
+    {
+      "src": "./static/logo.png",
+      "sizes": "100x100",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "index.html",
+  "display": "standalone",
+  "orientation": "landscape"
+}

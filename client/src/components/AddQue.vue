@@ -28,11 +28,17 @@ export default {
     addQuestion () {
       this.$api.addQuestion(this.question).then(rs => {
         if (rs.data.success) {
-
+          this.$emit('add', rs.data.data)
         } else {
           window.alert(rs.data.msg)
         }
-        console.log(rs.data)
+      }).catch(err => {
+        if (err.response) {
+          window.console.log(err.response)
+          window.alert(err.response.data.msg)
+        } else {
+          window.console.log(err)
+        }
       })
       this.close()
     },
