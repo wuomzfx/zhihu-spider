@@ -48,7 +48,8 @@ module.exports = {
     const q = new QuestionModel(question)
     const d = new DataModel(data)
     try {
-      const question = await q.save()
+      let question = await q.save()
+      question = question.toObject()
       const qData = await d.save()
       question.data = qData
       return {

@@ -28,7 +28,7 @@ export default {
     addQuestion () {
       this.$api.addQuestion(this.question).then(rs => {
         if (rs.data.success) {
-          this.$emit('add', rs.data.data)
+          this.$emit('add', rs.data.question)
         } else {
           window.alert(rs.data.msg)
         }

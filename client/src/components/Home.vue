@@ -58,6 +58,7 @@ export default {
       this.query.page += 1
     },
     addQuestion (question) {
+      window.console.log(question)
       this.questions.splice(0, 0, question)
     },
     getQuestion () {
