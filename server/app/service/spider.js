@@ -1,5 +1,5 @@
 const request = require('request-promise-native')
-// request = request.defaults({'proxy': 'http://127.0.0.1:1080'})//走本地代理做测试
+// request = request.defaults({'proxy': 'http://127.0.0.1:1080'})// 走本地代理做测试
 const cheerio = require('cheerio')
 const config = require('../config')
 const zhihuRoot = config.zhihu.root
@@ -47,8 +47,13 @@ module.exports = {
       offset: offset,
       type: type
     })
-    const url = `${zhihuRoot}/node/ExploreAnswerListV2?params=${params}`
-    const rs = await request(url).catch(err => {
+    const options = {
+      // headers: {
+      //   'Accept-Encoding': 'deflate, sdch, br' // 不允许gzip,开启gzip会开启知乎客户端渲染，导致无法爬取
+      // },
+      url: `${zhihuRoot}/node/ExploreAnswerListV2?params=${params}`
+    }
+    const rs = await request(options).catch(err => {
       return err
     })
     if (rs.error) {

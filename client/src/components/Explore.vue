@@ -33,6 +33,7 @@ export default {
   },
   methods: {
     isContinue () {
+      if (this.offset === 0) return
       window.setTimeout(() => {
         const listHeight = document.querySelector('.mu-list').clientHeight
         const contentHeight = document.querySelector('.app-content').clientHeight
