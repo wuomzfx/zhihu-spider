@@ -1,7 +1,6 @@
 <template>
   <div class="home-page">
     <mu-appbar title="问题列表">
-      <!-- <mu-flat-button label="当前跟踪" slot="right"/> -->
       <mu-flat-button :label="modeLabel" slot="right" @click="changeMode()"/>
     </mu-appbar>
     <div class="question-list app-content">
@@ -74,7 +73,12 @@ export default {
         }
       }).catch(err => {
         this.loadToken = false
-        window.console.log(err)
+        if (err.response) {
+          window.console.log(err.response)
+          window.alert(err.response.data.msg)
+        } else {
+          window.console.log(err)
+        }
       })
     },
     changeMode () {

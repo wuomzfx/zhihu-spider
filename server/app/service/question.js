@@ -80,5 +80,24 @@ module.exports = {
       updateTime: new Date(),
       expiredTime: new Date(+new Date() + 7 * 24 * 60 * 60 * 1000)
     })
+  },
+  async explore (offset = 0, type = 'day') {
+    const data = await spider.explore(offset)
+    if (!data.success) {
+      return data
+    }
+    const qs = await QuestionModel.find({
+      qid: {$in: data.qids}
+    }).exec()
+    const qsMap = {}
+    qs.forEach(q => {
+      qsMap[q.qid] = q.status
+    })
+    data.questions.forEach(q => {
+      if (qsMap[q.qid]) {
+        q.status = qsMap[q.qid]
+      }
+    })
+    return data
   }
 }

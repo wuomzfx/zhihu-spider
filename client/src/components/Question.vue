@@ -26,7 +26,7 @@ export default {
   props: ['question'],
   methods: {
     showData (question) {
-      this.$router.push(`/data/${question.qid}`)
+      if (question._id) this.$router.push(`/data/${question.qid}`)
     },
     stopCrawling (q, e) {
       e.stopPropagation()
@@ -34,16 +34,32 @@ export default {
         q.status = 0
       }).catch(err => {
         window.console.log(err)
-        window.alert('出错了，看日志去')
+        if (err.response) {
+          window.alert(err.response.data.msg)
+        }
+      })
+    },
+    addQuestion (q, e) {
+      e.stopPropagation()
+      this.$api.addQuestion(q).then(rs => {
+        q.status = 1
+      }).catch(err => {
+        window.console.log(err)
+        if (err.response) {
+          window.alert(err.response.data.msg)
+        }
       })
     },
     reCrawling (q, e) {
+      if (!q._id) return this.addQuestion(q, e)
       e.stopPropagation()
       this.$api.reCrawling(q.qid).then(rs => {
         q.status = 1
       }).catch(err => {
         window.console.log(err)
-        window.alert('出错了，看日志去')
+        if (err.response) {
+          window.alert(err.response.data.msg)
+        }
       })
     }
   }

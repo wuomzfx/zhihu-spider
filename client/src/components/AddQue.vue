@@ -5,7 +5,8 @@
         <mu-icon :size="30" value="add"/>
       </mu-icon-button>
     </mu-paper>
-    <mu-dialog :open="dialog" title="添加问题" @close="close">
+    <mu-dialog :open="dialog" title="" @close="close">
+      <template slot="title">添加问题<span>(2选1)</span></template>
       <mu-text-field v-model="question.url" hintText="URL"/>
       <mu-text-field v-model="question.qid" hintText="ID"/>
       <mu-flat-button slot="actions" primary @click="addQuestion" label="确定"/>
@@ -71,5 +72,14 @@ export default {
 }
 .mu-paper .mu-icon-button {
   padding: 0;
+}
+.mu-dialog .mu-dialog-title {
+  justify-content: inherit;
+  -webkit-justify-content: inherit;
+}
+.mu-dialog-title > span {
+  font-size: 14px;
+  margin-left: 3px;
+  color: #999;
 }
 </style>

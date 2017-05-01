@@ -44,8 +44,9 @@ class Question extends App {
     const { qid } = ctx.params
     ctx.body = await service.reActive(qid)
   }
-  // async explore (ctx) {
-  //   ctx.body
-  // }
+  async explore (ctx) {
+    const { offset } = ctx.params
+    ctx.body = await service.explore(offset)
+  }
 }
 module.exports = new Question()

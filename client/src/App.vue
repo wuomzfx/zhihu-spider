@@ -18,7 +18,7 @@ export default {
 </script>
 <style>
 .app-content {
-  position: fixed;
+  position: absolute;
   width: 100%;
   top: 56px;
   bottom: 56px;

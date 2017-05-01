@@ -1,13 +1,100 @@
 <template>
-  <div>
-    这是发现页
+  <div id="explore">
+    <mu-appbar>
+      <mu-text-field fullWidth
+                     icon="search"
+                     class="search-field"
+                     hintText="请输入搜索内容"/>
+    </mu-appbar>
+    <div class="question-list app-content">
+      <mu-list>
+        <question v-for="(q, key) in questions" key="key" :question='q'>
+        </question>
+      </mu-list>
+      <mu-infinite-scroll :scroller="scroller" :loading="loadToken" @load="explore" loadingText="loading">
+      </mu-infinite-scroll>
+    </div>
   </div>
 </template>
 
 <script>
+import Question from './Question'
 export default {
+  components: {
+    Question
+  },
+  data () {
+    return {
+      scroller: null,
+      loadToken: false,
+      offset: 0,
+      questions: []
+    }
+  },
+  methods: {
+    isContinue () {
+      window.setTimeout(() => {
+        const listHeight = document.querySelector('.mu-list').clientHeight
+        const contentHeight = document.querySelector('.app-content').clientHeight
+        if (listHeight < contentHeight) {
+          this.explore()
+        }
+      })
+    },
+    explore () {
+      if (this.loadToken) return
+      this.loadToken = true
+      this.$api.explore(this.offset).then(rs => {
+        this.loadToken = false
+        const questions = rs.data.questions
+        this.questions = this.questions.concat(questions)
+        this.offset += questions.length
+        this.isContinue()
+      }).catch(err => {
+        this.loadToken = false
+        if (err.response) {
+          window.console.log(err.response)
+          window.alert(err.response.data.msg)
+        } else {
+          window.console.log(err)
+        }
+      })
+    }
+  },
+  mounted () {
+    this.scroller = document.querySelector('.app-content')
+    this.explore()
+  }
 }
 </script>
 
 <style>
+#explore .mu-text-field.has-icon {
+  color: #eee;
+  margin: 0;
+  vertical-align: top;
+  margin-top: 12px;
+  min-height: 32px;
+  padding-left: 30px;
+  /*background-color: #4a9de5;*/
+  /*height: 56px;*/
+  /*line-height: 56px;*/
+}
+#explore .mu-text-field-content hr {
+  display: none;
+}
+#explore .mu-text-field-content {
+  padding: 0;
+  color: #eee;
+}
+#explore .mu-text-field-hint {
+  color: #8cc0ec;
+}
+#explore .mu-text-field-input{
+  color: #eee;
+}
+#explore .mu-text-field-icon {
+  top: 4px;
+  left: 0px;
+}
 </style>

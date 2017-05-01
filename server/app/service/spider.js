@@ -3,7 +3,14 @@ const request = require('request-promise-native')
 const cheerio = require('cheerio')
 const config = require('../config')
 const zhihuRoot = config.zhihu.root
-
+const getQidByUrl = (url) => {
+  try {
+    const reg = /question\/(\d*)/
+    return url.match(reg)[1]
+  } catch (err) {
+    return false
+  }
+}
 module.exports = {
   async getData (qid) {
     const options = {
@@ -34,6 +41,43 @@ module.exports = {
         answers: Number($('h4.List-headerText span').text().replace(' 个回答', ''))
       }
     }
+  },
+  async explore (offset = 0, type = 'day') {
+    const params = JSON.stringify({
+      offset: offset,
+      type: type
+    })
+    const url = `${zhihuRoot}/node/ExploreAnswerListV2?params=${params}`
+    const rs = await request(url).catch(err => {
+      return err
+    })
+    if (rs.error) {
+      return {
+        success: false,
+        status: rs.statusCode,
+        msg: rs.message
+      }
+    }
+    const $ = cheerio.load(rs)
+    const dataArr = []
+    const qids = []
+    const promises = $('.explore-feed.feed-item').map((k, el) => {
+      const qurl = $(el).find('h2 a').attr('href')
+      const qid = getQidByUrl(qurl)
+      return this.getData(qid).then(rs => {
+        if (rs.success && rs.data.readers > 0) {
+          rs.status = 0
+          rs.qid = qid
+          qids.push(qid)
+          dataArr.push(rs)
+        }
+      })
+    }).get()
+    await Promise.all(promises)
+    return {
+      success: true,
+      qids: qids,
+      questions: dataArr
+    }
   }
-  // async explore () {}
 }
