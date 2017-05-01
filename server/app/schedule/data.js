@@ -15,7 +15,7 @@ module.exports = {
     const promises = ques.map(q => {
       return spider.getData(q.qid).then(rs => {
         // console.log(rs)
-        if (rs.success) {
+        if (rs.success && rs.data.readers > 0) {
           dataArr.push(rs.data)
         }
       })

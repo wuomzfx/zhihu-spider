@@ -16,7 +16,6 @@ module.exports = {
       }
     }
     const $ = cheerio.load(rs)
-    console.log(rs)
     const NumberBoard = $('.NumberBoard-item .NumberBoard-value')
     return {
       success: true,
