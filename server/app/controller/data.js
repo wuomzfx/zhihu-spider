@@ -10,6 +10,8 @@ class Data extends App {
     }).exec()
     const data = await DataModel.find({
       qid: qid
+    }).sort({
+      createTime: -1
     }).exec()
     ctx.body = {question, data}
   }
