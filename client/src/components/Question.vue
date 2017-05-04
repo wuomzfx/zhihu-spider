@@ -16,7 +16,6 @@
                         backgroundColor="#2196f3"
                         @click.native="reCrawling(question, $event)"
                         v-else/>
-      <!-- <mu-switch :value="q.status === 1" @click.native="stopCrawling(q)"/> -->
     </div>
   </mu-list-item>
 </template>
@@ -77,13 +76,13 @@ export default {
 .question .mu-item-title {
   line-height: 1.4;
 }
-.question .mu-item-content span {
+.question .overview > span {
   line-height: 16px;
   display: inline-block;
   color: #666;
   margin: 10px 15px 0 0;
 }
-.question .mu-item-content span > * {
+.question .overview > span > * {
   vertical-align: top;
   margin-right: 2px;
 }

@@ -5,7 +5,7 @@
     </mu-appbar>
     <div class="question-list app-content">
       <mu-list>
-        <question v-for="q in questions" key="q._id" :question='q'>
+        <question v-for="q in questions" :key="q._id" :question='q'>
         </question>
       </mu-list>
       <mu-infinite-scroll :scroller="scroller" :loading="loadToken" @load="loadMore" loadingText="loading" :class="{noMore: noMore}">
@@ -83,6 +83,7 @@ export default {
     },
     changeMode () {
       this.questions = []
+      this.noMore = false
       this.query = {
         status: this.query.status === 1 ? 0 : 1,
         size: this.query.size,

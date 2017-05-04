@@ -66,19 +66,40 @@ module.exports = {
     const $ = cheerio.load(rs)
     const dataArr = []
     const qids = []
-    const promises = $('.explore-feed.feed-item').map((k, el) => {
-      const qurl = $(el).find('h2 a').attr('href')
-      const qid = getQidByUrl(qurl)
-      return this.getData(qid).then(rs => {
-        if (rs.success && rs.data.readers > 0) {
-          rs.status = 0
-          rs.qid = qid
-          qids.push(qid)
-          dataArr.push(rs)
-        }
+    $('.explore-feed.feed-item').each((k, el) => {
+      const $el = $(el)
+      const titleEl = $el.find('h2 a.question_link')
+      const qid = getQidByUrl(titleEl.attr('href'))
+      if (!qid) return
+      const summary = $el.find('.summary')
+      summary.find('img').remove()
+      summary.find('.toggle-expand').remove()
+      const answer = summary.html()
+      const title = titleEl.text()
+      qids.push(qid)
+      dataArr.push({
+        qid: qid,
+        title: title,
+        aid: $el.find('.zm-item-answer').data('atoken'),
+        answer: answer,
+        voters: $el.find('.js-voteCount').text(),
+        comments: $el.find('.js-toggleCommentBox').text().replace(' 条评论', '')
       })
-    }).get()
-    await Promise.all(promises)
+    })
+    // 并发太高，有问题
+    // const promises = $('.explore-feed.feed-item').map((k, el) => {
+    //   const qurl = $(el).find('h2 a').attr('href')
+    //   const qid = getQidByUrl(qurl)
+    //   return this.getData(qid).then(rs => {
+    //     if (rs.success && rs.data.readers > 0) {
+    //       rs.status = 0
+    //       rs.qid = qid
+    //       qids.push(qid)
+    //       dataArr.push(rs)
+    //     }
+    //   })
+    // }).get()
+    // await Promise.all(promises)
     return {
       success: true,
       qids: qids,

@@ -8,8 +8,7 @@
     </mu-appbar>
     <div class="question-list app-content">
       <mu-list>
-        <question v-for="(q, key) in questions" key="key" :question='q'>
-        </question>
+        <answer v-for="q in questions" :key="q.qid" :question='q'></answer>
       </mu-list>
       <mu-infinite-scroll :scroller="scroller" :loading="loadToken" @load="explore" loadingText="loading">
       </mu-infinite-scroll>
@@ -18,10 +17,10 @@
 </template>
 
 <script>
-import Question from './Question'
+import Answer from './Answer'
 export default {
   components: {
-    Question
+    Answer
   },
   data () {
     return {
@@ -33,14 +32,15 @@ export default {
   },
   methods: {
     isContinue () {
-      if (this.offset === 0) return
-      window.setTimeout(() => {
-        const listHeight = document.querySelector('.mu-list').clientHeight
-        const contentHeight = document.querySelector('.app-content').clientHeight
-        if (listHeight < contentHeight) {
-          this.explore()
-        }
-      })
+      return
+      // if (this.offset === 0) return
+      // window.setTimeout(() => {
+      //   const listHeight = document.querySelector('.mu-list').clientHeight
+      //   const contentHeight = document.querySelector('.app-content').clientHeight
+      //   if (listHeight < contentHeight) {
+      //     this.explore()
+      //   }
+      // })
     },
     explore () {
       if (this.loadToken) return

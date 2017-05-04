@@ -98,11 +98,13 @@ module.exports = {
     }).exec()
     const qsMap = {}
     qs.forEach(q => {
-      qsMap[q.qid] = q.status
+      qsMap[q.qid] = q
     })
     data.questions.forEach(q => {
+      q.status = 0
       if (qsMap[q.qid]) {
-        q.status = qsMap[q.qid]
+        q.status = qsMap[q.qid].status
+        q._id = qsMap[q.qid]._id
       }
     })
     return data
