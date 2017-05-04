@@ -46,7 +46,7 @@ class Question extends App {
   }
   async explore (ctx) {
     const { offset } = ctx.params
-    ctx.body = await service.explore(offset)
+    super.result(ctx, await service.explore(offset))
   }
 }
 module.exports = new Question()

@@ -45,11 +45,15 @@ export default {
       if (this.loadToken) return
       this.loadToken = true
       this.$api.explore(this.offset).then(rs => {
-        this.loadToken = false
-        const questions = rs.data.questions
-        this.questions = this.questions.concat(questions)
-        this.offset += questions.length
-        this.isContinue()
+        if (rs.success) {
+          this.loadToken = false
+          const questions = rs.data.questions
+          this.questions = this.questions.concat(questions)
+          this.offset += questions.length
+          this.isContinue()
+        } else {
+          window.alert(err.response.data.msg)
+        }
       }).catch(err => {
         this.loadToken = false
         if (err.response) {
