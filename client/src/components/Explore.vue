@@ -32,15 +32,14 @@ export default {
   },
   methods: {
     isContinue () {
-      return
-      // if (this.offset === 0) return
-      // window.setTimeout(() => {
-      //   const listHeight = document.querySelector('.mu-list').clientHeight
-      //   const contentHeight = document.querySelector('.app-content').clientHeight
-      //   if (listHeight < contentHeight) {
-      //     this.explore()
-      //   }
-      // })
+      if (this.offset === 0) return
+      window.setTimeout(() => {
+        const listHeight = document.querySelector('.mu-list').clientHeight
+        const contentHeight = document.querySelector('.app-content').clientHeight
+        if (listHeight < contentHeight) {
+          this.explore()
+        }
+      })
     },
     explore () {
       if (this.loadToken) return
