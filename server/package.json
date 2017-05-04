@@ -29,7 +29,7 @@
     "pm2": "2.4.6"
   },
   "scripts": {
-    "start": "pm2 start index.js",
+    "start": "pm2 start index.js --watch",
     "dev": "gulp",
     "lint": "eslint .",
     "fix": "eslint --fix ."

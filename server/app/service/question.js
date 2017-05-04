@@ -41,6 +41,13 @@ module.exports = {
       return rs
     }
     const { title, data } = rs
+    if (!title || data.readers <= 0) {
+      return {
+        success: false,
+        status: 500,
+        msg: '爬取失败'
+      }
+    }
     const question = {
       qid: qid,
       title: title
