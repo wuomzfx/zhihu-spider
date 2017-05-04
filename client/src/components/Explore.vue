@@ -45,7 +45,7 @@ export default {
       if (this.loadToken) return
       this.loadToken = true
       this.$api.explore(this.offset).then(rs => {
-        if (rs.success) {
+        if (rs.data.success) {
           this.loadToken = false
           const questions = rs.data.questions
           this.questions = this.questions.concat(questions)
