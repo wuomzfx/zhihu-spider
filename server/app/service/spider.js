@@ -30,8 +30,6 @@ module.exports = {
       }
     }
     const $ = cheerio.load(rs)
-    console.log(rs)
-    console.log($('#error').length)
     if ($('#error').length) {
       return {
         success: false,
@@ -73,6 +71,13 @@ module.exports = {
       }
     }
     const $ = cheerio.load(rs)
+    if ($('#error').length) {
+      return {
+        success: false,
+        status: 500,
+        msg: 'IP被限'
+      }
+    }
     const dataArr = []
     const qids = []
     $('.explore-feed.feed-item').each((k, el) => {
