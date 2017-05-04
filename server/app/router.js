@@ -7,7 +7,8 @@ const auth = require('./controller/auth')
 // router.get('/', action.index)
 // router.get('/spider', action.spider)
 
-router.get('/auth/login', auth.login)
+router.post('/api/auth/init-login', auth.initLogin)
+router.post('/api/auth/login', auth.login)
 
 router.post('/api/question', question.create)
 router.get('/api/question', question.get)

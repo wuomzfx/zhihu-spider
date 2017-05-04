@@ -14,6 +14,13 @@ Vue.prototype.$http = axios
 Vue.prototype.$api = api
 Vue.config.productionTip = false
 
+router.beforeEach((to, from, next) => {
+  if (to.name === 'Login' || window.localStorage.dahuCookie) {
+    next()
+  } else {
+    next('/login')
+  }
+})
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
