@@ -64,6 +64,7 @@ module.exports = {
       }
     }
     const $ = cheerio.load(rs)
+    console.log(rs)
     const dataArr = []
     const qids = []
     $('.explore-feed.feed-item').each((k, el) => {
