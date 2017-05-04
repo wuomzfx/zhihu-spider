@@ -52,7 +52,7 @@ export default {
           this.offset += questions.length
           this.isContinue()
         } else {
-          window.alert(err.response.data.msg)
+          window.alert(rs.data.msg)
         }
       }).catch(err => {
         this.loadToken = false
