@@ -29,14 +29,14 @@ module.exports = {
         msg: rs.message
       }
     }
-    if (rs.indexOf('访问频次过快') >= 0) {
+    const $ = cheerio.load(rs)
+    if ($('#error').length) {
       return {
         success: false,
         status: 500,
         msg: 'IP被限'
       }
     }
-    const $ = cheerio.load(rs)
     const NumberBoard = $('.NumberBoard-item .NumberBoard-value')
     return {
       success: true,
