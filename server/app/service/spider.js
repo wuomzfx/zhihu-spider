@@ -30,6 +30,8 @@ module.exports = {
       }
     }
     const $ = cheerio.load(rs)
+    console.log(rs)
+    console.log($('#error').length)
     if ($('#error').length) {
       return {
         success: false,
