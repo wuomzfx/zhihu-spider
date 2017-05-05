@@ -3,6 +3,10 @@ class App {
     if (result.status) {
       ctx.status = result.status
     }
+    if (result.headers) {
+      ctx.set('Set-Cookie', result.headers['set-cookie'])
+      console.log(ctx.header)
+    }
     ctx.body = result
   }
   success (ctx, data) {

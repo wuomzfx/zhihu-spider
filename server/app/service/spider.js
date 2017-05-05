@@ -25,11 +25,42 @@ module.exports = {
       }
     }
   },
+  async getCaptcha (cookie) {
+    const time = Date.now()
+    const options = {
+      cookie: cookie,
+      url: `${zhihuRoot}/captcha.gif?r=${time}&type=login`
+    }
+    let res
+    const rs = await request(options).on('response', function (response) {
+      res = response
+    }).catch(err => {
+      return err
+    })
+    if (rs.error) {
+      return {
+        success: false,
+        status: rs.statusCode,
+        msg: rs.message
+      }
+    }
+    return {
+      headers: res.headers,
+      data: {
+        captcha: rs
+      },
+      success: true
+    }
+  },
   async initLogin () {
     const options = {
+      // url: `http://www.baidu.com`
       url: `${zhihuRoot}/#signin`
     }
-    const rs = await request(options).catch(err => {
+    let res
+    const rs = await request(options).on('response', function (response) {
+      res = response
+    }).catch(err => {
       return err
     })
     if (rs.error) {
@@ -45,6 +76,7 @@ module.exports = {
       return judge
     }
     return {
+      headers: res.headers,
       data: {
         xsrf: $('input[name=_xsrf]').val()
       },

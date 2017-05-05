@@ -32,6 +32,7 @@ export default {
   data () {
     return {
       loginInfo: {
+        cookie: '',
         _xsrf: null,
         phone_num: '',
         password: '',
@@ -57,11 +58,32 @@ export default {
       const time = Date.now()
       const src = `https://www.zhihu.com/captcha.gif?r=${time}&type=login`
       document.querySelector('#captcha-image').src = src
+      document.querySelector('#captcha-image').onload = (rs) => {
+        window.console.log(rs)
+      }
+    },
+    getCaptcha () {
+      this.$api.getCaptcha(this.loginInfo.cooki).then(rs => {
+        window.console.log(rs)
+      }).catch(err => {
+        window.console.log(err)
+        if (err.response) {
+          window.alert(err.response.data.msg)
+        }
+      })
+    },
+    buildInfo (rs) {
+      // this.refreshCaptcha()
+      this.loginInfo._xsrf = rs.data.xsrf
+      if (rs.headers['set-cookie']) {
+        this.loginInfo.cookie = rs.headers['set-cookie'].join('')
+      }
+      // this.getCaptcha()
     },
     initLogin () {
       this.$api.initLogin().then(rs => {
         window.console.log(rs)
-        this.loginInfo._xsrf = rs.data.data.xsrf
+        this.buildInfo(rs.data)
       }).catch(err => {
         window.console.log(err)
         if (err.response) {

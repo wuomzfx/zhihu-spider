@@ -14,7 +14,9 @@ mongoose.Promise = global.Promise
 mongoose.connect(host, database, port)
 
 // 跨域
-app.use(cors())
+app.use(cors({
+  credentials: true
+}))
 
 app.use(bodyParser())
 

@@ -1,4 +1,4 @@
-// const spider = require('../service/spider')
+const spider = require('../service/spider')
 const auth = require('../service/auth')
 const App = require('./app')
 
@@ -10,11 +10,15 @@ class Question extends App {
     ctx.body = await auth.login(params)
   }
   async initLogin (ctx) {
+    // const { cookie } = ctx.request.body
+    // ctx.body = {
+    //   data: cookie
+    // }
+    super.result(ctx, await spider.initLogin())
+  }
+  async captcha (ctx) {
     const { cookie } = ctx.request.body
-    // super.result(ctx, await spider.initLogin())
-    ctx.body = {
-      data: cookie
-    }
+    super.result(ctx, await spider.getCaptcha(cookie))
   }
 }
 module.exports = new Question()
