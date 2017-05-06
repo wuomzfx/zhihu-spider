@@ -32,7 +32,6 @@ export default {
   data () {
     return {
       loginInfo: {
-        cookie: '',
         _xsrf: null,
         phone_num: '',
         password: '',
@@ -63,22 +62,20 @@ export default {
       }
     },
     getCaptcha () {
-      this.$api.getCaptcha(this.loginInfo.cooki).then(rs => {
-        window.console.log(rs)
-      }).catch(err => {
-        window.console.log(err)
-        if (err.response) {
-          window.alert(err.response.data.msg)
-        }
-      })
+      // this.$api.getCaptcha(this.loginInfo.cooki).then(rs => {
+      //   window.console.log(rs)
+      // }).catch(err => {
+      //   window.console.log(err)
+      //   if (err.response) {
+      //     window.alert(err.response.data.msg)
+      //   }
+      // })
+      document.querySelector('#captcha-image').src = this.$api.getCaptcha()
     },
     buildInfo (rs) {
-      // this.refreshCaptcha()
       this.loginInfo._xsrf = rs.data.xsrf
-      if (rs.headers['set-cookie']) {
-        this.loginInfo.cookie = rs.headers['set-cookie'].join('')
-      }
-      // this.getCaptcha()
+      // this.refreshCaptcha()
+      this.getCaptcha()
     },
     initLogin () {
       this.$api.initLogin().then(rs => {

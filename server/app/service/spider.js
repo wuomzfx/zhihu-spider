@@ -25,32 +25,15 @@ module.exports = {
       }
     }
   },
-  async getCaptcha (cookie) {
+  getCaptcha (cb) {
     const time = Date.now()
     const options = {
-      cookie: cookie,
+      encoding: null,
       url: `${zhihuRoot}/captcha.gif?r=${time}&type=login`
     }
-    let res
-    const rs = await request(options).on('response', function (response) {
-      res = response
-    }).catch(err => {
-      return err
+    return request(options, (err, res, body) => {
+      cb(err, res, body)
     })
-    if (rs.error) {
-      return {
-        success: false,
-        status: rs.statusCode,
-        msg: rs.message
-      }
-    }
-    return {
-      headers: res.headers,
-      data: {
-        captcha: rs
-      },
-      success: true
-    }
   },
   async initLogin () {
     const options = {

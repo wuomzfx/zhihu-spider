@@ -1,13 +1,21 @@
+const handleCookie = (ctx, result) => {
+  if (result.headers['set-cookie']) {
+    const cookies = result.headers['set-cookie'].map(r => {
+      return r.split(';')[0] + ';'
+    })
+    ctx.set('set-cookie', cookies)
+  }
+}
 class App {
   result (ctx, result) {
     if (result.status) {
       ctx.status = result.status
     }
-    if (result.headers) {
-      ctx.set('Set-Cookie', result.headers['set-cookie'])
-      console.log(ctx.header)
-    }
+    handleCookie(ctx, result)
     ctx.body = result
+  }
+  handleCookie (ctx, result) {
+    return handleCookie(ctx, result)
   }
   success (ctx, data) {
     ctx.body = {
