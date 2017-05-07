@@ -54,14 +54,8 @@ export default {
         } else {
           window.alert(rs.data.msg)
         }
-      }).catch(err => {
+      }).catch(() => {
         this.loadToken = false
-        if (err.response) {
-          window.console.log(err.response)
-          window.alert(err.response.data.msg)
-        } else {
-          window.console.log(err)
-        }
       })
     }
   },

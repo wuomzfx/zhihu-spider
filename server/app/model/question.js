@@ -5,13 +5,18 @@ const Status = {
   stoped: 0
 }
 const Question = new mongoose.Schema({
+  userId: {
+    type: String,
+    required: true
+  },
   title: {
     type: String,
+    required: true,
     unique: false
   },
   qid: {
     type: String,
-    unique: true
+    unique: false
   },
   createTime: {
     type: Date,

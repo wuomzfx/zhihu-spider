@@ -1,13 +1,27 @@
-const stream = require('stream')
 const spider = require('../service/spider')
-const auth = require('../service/auth')
+const authService = require('../service/auth')
 const App = require('./app')
 
-class Question extends App {
+class Auth extends App {
+  async check (ctx, next) {
+    if (ctx.request.url.indexOf('auth') >= 0) {
+      return next()
+    }
+    const rs = await authService.check(ctx.header.authorization)
+    if (rs.success) {
+      ctx.authInfo = rs.auth
+      return next()
+    } else {
+      super.result(ctx, rs)
+    }
+  }
   async login (ctx) {
     const params = ctx.request.body
-    // super.result(ctx, await auth.login())
-    ctx.body = await auth.login(params, ctx.header.cookie)
+    let rs = await authService.login(params, ctx.header.cookie)
+    if (rs.success) {
+      rs.auth = await authService.upsertAuth(params.phone_num, rs.headers)
+    }
+    super.result(ctx, rs)
   }
   async initLogin (ctx) {
     super.result(ctx, await spider.initLogin())
@@ -19,18 +33,11 @@ class Question extends App {
           status: 500
         }
       }
-      for (var h in res.headers) {
-        if (h === 'set-cookie') {
-          const cookies = res.headers[h].map(r => {
-            return r.split(';')[0] + ';'
-          })
-          ctx.set('set-cookie', cookies)
-        } else {
-          ctx.set(h, res.headers[h])
-        }
-      }
+      super.handleHeaders(ctx, {
+        headers: res.headers
+      })
       ctx.body = body
     })
   }
 }
-module.exports = new Question()
+module.exports = new Auth()

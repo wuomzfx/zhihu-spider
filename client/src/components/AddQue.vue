@@ -33,13 +33,6 @@ export default {
         } else {
           window.alert(rs.data.msg)
         }
-      }).catch(err => {
-        if (err.response) {
-          window.console.log(err.response)
-          window.alert(err.response.data.msg)
-        } else {
-          window.console.log(err)
-        }
       })
       this.close()
     },

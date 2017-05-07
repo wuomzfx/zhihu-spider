@@ -1,11 +1,28 @@
 const QuestionModel = require('../model/question')
 const DataModel = require('../model/data')
-const spider = require('../service/spider')
+const AuthModel = require('../model/auth')
+const spiderService = require('../service/spider')
 
 module.exports = {
-  async get () {
+  async getAll () {
     const cond = {
-      status: 1
+      status: 1,
+      expiredTime: {
+        $gt: new Date()
+      }
+    }
+    const auths = await AuthModel
+                        .find(cond)
+                        .sort({createTime: -1})
+                        .exec()
+    auths.forEach(a => {
+      this.get(a)
+    })
+  },
+  async get (auth) {
+    const cond = {
+      status: 1,
+      userId: auth._id
     }
     const ques = await QuestionModel
                               .find(cond)
@@ -14,7 +31,7 @@ module.exports = {
     // 并发请求，容易被封
     // const dataArr = []
     // const promises = ques.map(q => {
-    //   return spider.getData(q.qid).then(rs => {
+    //   return spiderService.getData(q.qid).then(rs => {
     //     // console.log(rs)
     //     if (rs.success && rs.data.readers > 0) {
     //       dataArr.push(rs.data)
@@ -26,7 +43,7 @@ module.exports = {
     //   DataModel.create(dataArr)
     // }
     ques.forEach(q => {
-      spider.getData(q.qid).then(rs => {
+      spiderService.getData(auth.cookie, q.qid).then(rs => {
         if (rs.success && rs.data.readers > 0) {
           new DataModel(rs.data).save()
         }

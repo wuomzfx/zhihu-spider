@@ -15,7 +15,7 @@ Vue.prototype.$api = api
 Vue.config.productionTip = false
 
 router.beforeEach((to, from, next) => {
-  if (to.name === 'Login' || window.localStorage.dahuCookie) {
+  if (to.name === 'Login' || window.localStorage.anserAuth) {
     next()
   } else {
     next('/login')

@@ -21,13 +21,16 @@ class Question extends App {
       return
     }
     // super.error(ctx, '反正就是错了')
-    super.result(ctx, await service.add(qid))
+    super.result(ctx, await service.add(ctx.authInfo, qid))
   }
   async get (ctx) {
     let {page = 1, size = 10, status = 1} = ctx.request.query
     page = Number(page)
     size = Number(size)
-    const cond = { status: Number(status) }
+    const cond = {
+      userId: ctx.header.authorization,
+      status: Number(status)
+    }
     ctx.body = {
       data: await service.get(page, size, cond),
       pageData: {
@@ -46,7 +49,7 @@ class Question extends App {
   }
   async explore (ctx) {
     const { offset } = ctx.params
-    super.result(ctx, await service.explore(offset))
+    super.result(ctx, await service.explore(ctx.authInfo.cookie, offset))
   }
 }
 module.exports = new Question()

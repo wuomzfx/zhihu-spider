@@ -1,21 +1,24 @@
-const handleCookie = (ctx, result) => {
+const handleHeaders = (ctx, result) => {
   if (result.headers['set-cookie']) {
     const cookies = result.headers['set-cookie'].map(r => {
       return r.split(';')[0] + ';'
     })
     ctx.set('set-cookie', cookies)
   }
+  delete result.headers
 }
 class App {
   result (ctx, result) {
     if (result.status) {
       ctx.status = result.status
     }
-    handleCookie(ctx, result)
+    if (result.headers) {
+      handleHeaders(ctx, result)
+    }
     ctx.body = result
   }
-  handleCookie (ctx, result) {
-    return handleCookie(ctx, result)
+  handleHeaders (ctx, result) {
+    return handleHeaders(ctx, result)
   }
   success (ctx, data) {
     ctx.body = {

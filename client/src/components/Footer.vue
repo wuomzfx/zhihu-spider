@@ -1,24 +1,14 @@
 <template>
   <mu-paper id="footer">
-      <mu-bottom-nav :value="bottomNav" @change="handleChange">
-        <mu-bottom-nav-item value="home" title="Home" to="/" icon="home"/>
-        <mu-bottom-nav-item value="explore" title="Explore" to="/explore" icon="explore"/>
+      <mu-bottom-nav :value="$route.name">
+        <mu-bottom-nav-item value="Home" title="Home" to="/" icon="home"/>
+        <mu-bottom-nav-item value="Explore" title="Explore" to="/explore" icon="explore"/>
       </mu-bottom-nav>
   </mu-paper>
 </template>
 
 <script>
 export default {
-  data () {
-    return {
-      bottomNav: 'home'
-    }
-  },
-  methods: {
-    handleChange (val) {
-      this.bottomNav = val
-    }
-  }
 }
 </script>
 

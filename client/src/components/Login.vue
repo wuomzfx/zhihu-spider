@@ -10,7 +10,7 @@
             <mu-flexbox-item>
               <mu-text-field hintText="验证码" v-model="loginInfo.captcha" fullWidth/>
             </mu-flexbox-item>
-            <mu-flexbox-item class="captcha-image">
+            <mu-flexbox-item class="captcha-image" @click.native=refreshCaptcha>
               <img id="captcha-image" src="">
             </mu-flexbox-item>
           </mu-flexbox>
@@ -45,47 +45,22 @@ export default {
   methods: {
     login () {
       this.$api.login(this.loginInfo).then(rs => {
-        window.console.log(rs)
-      }).catch(err => {
-        window.console.log(err)
-        if (err.response) {
-          window.alert(err.response.data.msg)
-        }
+        this.$api.setAnserAuth(rs.data.auth)
+        this.$router.push('/')
       })
     },
     refreshCaptcha () {
-      const time = Date.now()
-      const src = `https://www.zhihu.com/captcha.gif?r=${time}&type=login`
-      document.querySelector('#captcha-image').src = src
-      document.querySelector('#captcha-image').onload = (rs) => {
-        window.console.log(rs)
-      }
-    },
-    getCaptcha () {
-      // this.$api.getCaptcha(this.loginInfo.cooki).then(rs => {
-      //   window.console.log(rs)
-      // }).catch(err => {
-      //   window.console.log(err)
-      //   if (err.response) {
-      //     window.alert(err.response.data.msg)
-      //   }
-      // })
+      document.querySelector('#captcha-image').src = ''
       document.querySelector('#captcha-image').src = this.$api.getCaptcha()
     },
     buildInfo (rs) {
       this.loginInfo._xsrf = rs.data.xsrf
-      // this.refreshCaptcha()
-      this.getCaptcha()
+      this.refreshCaptcha()
     },
     initLogin () {
       this.$api.initLogin().then(rs => {
         window.console.log(rs)
         this.buildInfo(rs.data)
-      }).catch(err => {
-        window.console.log(err)
-        if (err.response) {
-          window.alert(err.response.data.msg)
-        }
       })
     }
   }

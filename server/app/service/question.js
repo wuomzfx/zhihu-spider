@@ -1,4 +1,4 @@
-const spider = require('./spider')
+const spiderService = require('./spider')
 const QuestionModel = require('../model/question')
 const DataModel = require('../model/data')
 
@@ -35,8 +35,9 @@ module.exports = {
     })
     return qs
   },
-  async add (qid) {
-    const rs = await spider.getData(qid)
+  async add (authInfo, qid) {
+    console.log(authInfo)
+    const rs = await spiderService.getData(authInfo.cookie, qid)
     if (!rs.success) {
       return rs
     }
@@ -50,18 +51,18 @@ module.exports = {
     }
     const question = {
       qid: qid,
+      userId: authInfo._id,
       title: title
     }
     const q = new QuestionModel(question)
     const d = new DataModel(data)
     try {
-      let question = await q.save()
-      question = question.toObject()
+      const que = (await q.save()).toObject()
       const qData = await d.save()
-      question.data = qData
+      que.data = qData
       return {
         success: true,
-        question
+        question: que
       }
     } catch (err) {
       return {
@@ -88,8 +89,8 @@ module.exports = {
       expiredTime: new Date(+new Date() + 7 * 24 * 60 * 60 * 1000)
     })
   },
-  async explore (offset = 0, type = 'day') {
-    const data = await spider.explore(offset)
+  async explore (cookie, offset = 0, type = 'day') {
+    const data = await spiderService.explore(cookie, offset)
     if (!data.success) {
       return data
     }

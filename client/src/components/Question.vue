@@ -31,22 +31,12 @@ export default {
       e.stopPropagation()
       this.$api.stopCrawling(q.qid).then(rs => {
         q.status = 0
-      }).catch(err => {
-        window.console.log(err)
-        if (err.response) {
-          window.alert(err.response.data.msg)
-        }
       })
     },
     addQuestion (q, e) {
       e.stopPropagation()
       this.$api.addQuestion(q).then(rs => {
         q.status = 1
-      }).catch(err => {
-        window.console.log(err)
-        if (err.response) {
-          window.alert(err.response.data.msg)
-        }
       })
     },
     reCrawling (q, e) {
@@ -54,11 +44,6 @@ export default {
       e.stopPropagation()
       this.$api.reCrawling(q.qid).then(rs => {
         q.status = 1
-      }).catch(err => {
-        window.console.log(err)
-        if (err.response) {
-          window.alert(err.response.data.msg)
-        }
       })
     }
   }
