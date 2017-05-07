@@ -1,5 +1,6 @@
 const request = require('request-promise-native')
 // request = request.defaults({'proxy': 'http://127.0.0.1:1080'})// 走本地代理做测试
+const querystring = require('querystring')
 const cheerio = require('cheerio')
 const config = require('../config')
 const zhihuRoot = config.zhihu.root
@@ -19,9 +20,31 @@ module.exports = {
       msg: rs.message
     }
   },
+  async quickSearch (cookie, token) {
+    const query = querystring.stringify({
+      token: token,
+      max_matches: 10,
+      use_similar: 0
+    }, null, null, {
+      encodeURIComponent: encodeURIComponent
+    })
+    const options = {
+      url: `${zhihuRoot}/autocomplete?${query}`,
+      headers: {
+        'Cookie': cookie,
+        'Accept-Encoding': 'deflate, sdch, br'
+      }
+    }
+    const rs = await request(options).catch(err => {
+      return err
+    })
+    if (rs.error) {
+      return this.failRequest(rs)
+    }
+  },
   async profile (cookie) {
     const options = {
-      url: `https://www.zhihu.com/people/xiang-xiang-74-4-96/activities`,
+      url: `https://www.zhihu.com/`,
       headers: {
         'Cookie': cookie,
         'Accept-Encoding': 'deflate, sdch, br'
