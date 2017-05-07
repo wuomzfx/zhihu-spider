@@ -19,7 +19,7 @@ class Auth extends App {
     const params = ctx.request.body
     let rs = await authService.login(params, ctx.header.cookie)
     if (rs.success) {
-      rs.auth = await authService.upsertAuth(params.phone_num, rs.headers, ctx.header.cookie)
+      rs.auth = await authService.upsertAuth(params.phone_num, rs.headers)
     }
     super.result(ctx, rs)
   }

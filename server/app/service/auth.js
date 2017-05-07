@@ -26,7 +26,7 @@ module.exports = {
       return err
     }
   },
-  buildCookie (cookies, cookie) {
+  buildCookie (cookies) {
     let date
     const data = cookies.map(c => {
       if (c.indexOf('z_c0') >= 0) {
@@ -40,8 +40,8 @@ module.exports = {
       expires: date
     }
   },
-  async upsertAuth (phone, headers, cookie) {
-    const cookieData = this.buildCookie(headers['set-cookie'], cookie)
+  async upsertAuth (phone, headers) {
+    const cookieData = this.buildCookie(headers['set-cookie'])
     const rs = await AuthModel.findOneAndUpdate({
       phone: phone
     }, {
