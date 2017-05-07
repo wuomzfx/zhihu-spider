@@ -112,6 +112,7 @@ module.exports = {
       },
       url: `${zhihuRoot}/node/ExploreAnswerListV2?params=${params}`
     }
+    console.log(options)
     const rs = await request(options).catch(err => {
       return err
     })
