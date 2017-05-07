@@ -26,21 +26,22 @@ module.exports = {
       return err
     }
   },
-  buildCookie (cookies) {
+  buildCookie (cookies, cookie) {
     let date
-    const data = cookies.map(cookie => {
-      if (cookie.indexOf('z_c0') >= 0) {
-        date = new Date(cookie.split(';')[2].replace('expires=', ''))
+    const data = cookies.map(c => {
+      if (c.indexOf('z_c0') >= 0) {
+        date = new Date(c.split(';')[2].replace('expires=', ''))
+        // return c.split(';')[0]
       }
-      return cookie.split(';')[0] + ';'
-    })
+      return c.split(';')[0] + ';'
+    }).join(' ')
     return {
-      data: data,
+      data: data.substring(0, data.length - 1),
       expires: date
     }
   },
-  async upsertAuth (phone, headers) {
-    const cookieData = this.buildCookie(headers['set-cookie'])
+  async upsertAuth (phone, headers, cookie) {
+    const cookieData = this.buildCookie(headers['set-cookie'], cookie)
     const rs = await AuthModel.findOneAndUpdate({
       phone: phone
     }, {

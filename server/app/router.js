@@ -3,9 +3,12 @@ const router = new Router()
 const data = require('./controller/data')
 const question = require('./controller/question')
 const auth = require('./controller/auth')
+const profile = require('./controller/profile')
 
 // router.get('/', action.index)
 // router.get('/spider', action.spider)
+
+router.get('/api/profile/get', profile.getInfo)
 
 router.get('/api/auth/init-login', auth.initLogin)
 router.get('/api/auth/captcha.gif', auth.captcha)

@@ -36,7 +36,6 @@ module.exports = {
     return qs
   },
   async add (authInfo, qid) {
-    console.log(authInfo)
     const rs = await spiderService.getData(authInfo.cookie, qid)
     if (!rs.success) {
       return rs

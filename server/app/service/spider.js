@@ -12,6 +12,38 @@ const getQidByUrl = (url) => {
   }
 }
 module.exports = {
+  failRequest (rs) {
+    return {
+      success: false,
+      status: rs.statusCode,
+      msg: rs.message
+    }
+  },
+  async profile (cookie) {
+    const options = {
+      url: `https://www.zhihu.com/people/xiang-xiang-74-4-96/activities`,
+      headers: {
+        'Cookie': cookie,
+        'Accept-Encoding': 'deflate, sdch, br'
+      }
+    }
+    const rs = await request(options).catch(err => {
+      return err
+    })
+    if (rs.error) {
+      return this.failRequest(rs)
+    }
+    // const $ = cheerio.load(rs)
+    // const judge = this.judgeLoad($)
+    // if (!judge.success) {
+    //   return judge
+    // }
+    // console.log(rs)
+    return {
+      success: true,
+      data: rs
+    }
+  },
   judgeLoad ($) {
     if ($('#error').length) {
       return {
@@ -47,11 +79,7 @@ module.exports = {
       return err
     })
     if (rs.error) {
-      return {
-        success: false,
-        status: rs.statusCode,
-        msg: rs.message
-      }
+      return this.failRequest(rs)
     }
     const $ = cheerio.load(rs)
     const judge = this.judgeLoad($)
@@ -78,11 +106,7 @@ module.exports = {
       return err
     })
     if (rs.error) {
-      return {
-        success: false,
-        status: rs.statusCode,
-        msg: rs.message
-      }
+      return this.failRequest(rs)
     }
     const $ = cheerio.load(rs)
     const judge = this.judgeLoad($)
@@ -117,11 +141,7 @@ module.exports = {
       return err
     })
     if (rs.error) {
-      return {
-        success: false,
-        status: rs.statusCode,
-        msg: rs.message
-      }
+      return this.failRequest(rs)
     }
     const $ = cheerio.load(rs)
     const judge = this.judgeLoad($)
