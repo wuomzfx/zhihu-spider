@@ -91,6 +91,7 @@ module.exports = {
     if (rs.errcode) {
       return {
         success: false,
+        status: 400,
         data: rs.data,
         msg: rs.msg
       }

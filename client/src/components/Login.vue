@@ -17,8 +17,7 @@
         </div>
       </div>
       <div class="login-act">
-        <mu-raised-button label="登陆"
-                          v-if="loginInfo._xsrf"
+        <mu-raised-button label="登录"
                           fullWidth
                           backgroundColor="#2196f3"
                           @click="login"/>
@@ -31,8 +30,9 @@
 export default {
   data () {
     return {
+      loginToken: false,
       loginInfo: {
-        _xsrf: null,
+        _xsrf: '',
         phone_num: '',
         password: '',
         captcha: ''
@@ -44,9 +44,17 @@ export default {
   },
   methods: {
     login () {
+      if (this.loginToken) return
+      this.loginToken = true
       this.$api.login(this.loginInfo).then(rs => {
-        this.$api.setAnserAuth(rs.data.auth)
-        this.$router.push('/')
+        this.loginToken = false
+        if (rs.data.success && rs.data.auth) {
+          this.$api.setAnserAuth(rs.data.auth)
+          window.alert(rs.data.auth._id)
+          this.$router.push('/')
+        }
+      }).catch(() => {
+        this.loginToken = false
       })
     },
     refreshCaptcha () {
@@ -54,7 +62,7 @@ export default {
       document.querySelector('#captcha-image').src = this.$api.getCaptcha()
     },
     buildInfo (rs) {
-      this.loginInfo._xsrf = rs.data.xsrf
+      // this.loginInfo._xsrf = rs.data.xsrf
       this.refreshCaptcha()
     },
     initLogin () {
@@ -71,7 +79,6 @@ export default {
 .login-page {
   position: absolute;
   z-index: 1;
-  background-color: #fff;
   top: 0;
   bottom: 0;
   width: 100%;
@@ -94,9 +101,10 @@ export default {
   min-height: 100px;
   width: 80%;
   margin: 0 auto;
-  position: relative;
+  position: absolute;
   top: 50%;
-  transform: translate(0, -50%);
+  left: 50%;
+  transform: translate(-50%, -50%);
   text-align: center;
 }
 .login-box .title {

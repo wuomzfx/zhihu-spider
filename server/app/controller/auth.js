@@ -24,7 +24,12 @@ class Auth extends App {
     super.result(ctx, rs)
   }
   async initLogin (ctx) {
-    super.result(ctx, await spider.initLogin())
+    super.deleteCookie(ctx)
+    ctx.body = {
+      success: true
+    }
+    // 发现并不需要xsrf token
+    // super.result(ctx, await spider.initLogin())
   }
   async captcha (ctx) {
     await spider.getCaptcha((err, res, body) => {

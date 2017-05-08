@@ -1,9 +1,11 @@
 const handleHeaders = (ctx, result) => {
   if (result.headers['set-cookie']) {
-    const cookies = result.headers['set-cookie'].map(r => {
-      return r.split(';')[0] + ';'
+    result.headers['set-cookie'].forEach(r => {
+      const cookie = r.split(';')[0]
+      const name = cookie.split('=')[0]
+      const value = cookie.replace(`${name}=`, '')
+      ctx.cookies.set(name, value)
     })
-    ctx.set('set-cookie', cookies)
   }
   delete result.headers
 }
@@ -16,6 +18,13 @@ class App {
       handleHeaders(ctx, result)
     }
     ctx.body = result
+  }
+  deleteCookie (ctx) {
+    if (!ctx.header.cookie) return
+    ctx.header.cookie.split('; ').forEach(cookie => {
+      const name = cookie.split('=')[0]
+      ctx.cookies.set(name, null)
+    })
   }
   handleHeaders (ctx, result) {
     return handleHeaders(ctx, result)
