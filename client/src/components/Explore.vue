@@ -1,11 +1,6 @@
 <template>
   <div id="explore">
-    <mu-appbar>
-      <mu-text-field fullWidth
-                     icon="search"
-                     class="search-field"
-                     hintText="请输入搜索内容"/>
-    </mu-appbar>
+    <mu-appbar title="发现"></mu-appbar>
     <div class="question-list app-content">
       <mu-list>
         <answer v-for="q in questions" :key="q.qid" :question='q'></answer>
@@ -67,32 +62,4 @@ export default {
 </script>
 
 <style>
-#explore .mu-text-field.has-icon {
-  color: #eee;
-  margin: 0;
-  vertical-align: top;
-  margin-top: 12px;
-  min-height: 32px;
-  padding-left: 30px;
-  /*background-color: #4a9de5;*/
-  /*height: 56px;*/
-  /*line-height: 56px;*/
-}
-#explore .mu-text-field-content hr {
-  display: none;
-}
-#explore .mu-text-field-content {
-  padding: 0;
-  color: #eee;
-}
-#explore .mu-text-field-hint {
-  color: #8cc0ec;
-}
-#explore .mu-text-field-input{
-  color: #eee;
-}
-#explore .mu-text-field-icon {
-  top: 4px;
-  left: 0px;
-}
 </style>

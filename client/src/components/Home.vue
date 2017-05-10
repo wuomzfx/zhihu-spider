@@ -51,6 +51,9 @@ export default {
     }
   },
   methods: {
+    getProfile () {
+      this.$api.profile()
+    },
     loadMore () {
       window.console.log('123')
       if (this.noMore) return
@@ -86,8 +89,9 @@ export default {
     }
   },
   mounted () {
-    this.getQuestion()
     this.scroller = document.querySelector('.app-content')
+    this.getQuestion()
+    this.getProfile()
   }
 }
 </script>

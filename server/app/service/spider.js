@@ -20,13 +20,57 @@ module.exports = {
       msg: rs.message
     }
   },
+  encode (params) {
+    return querystring.stringify(params, null, null, {
+      encodeURIComponent: encodeURIComponent
+    })
+  },
+  async search (cookie, data) {
+    const query = this.encode(data)
+    const options = {
+      url: `${zhihuRoot}/r/search?${query}`,
+      headers: {
+        'Cookie': cookie
+      }
+    }
+    const rs = await request(options).catch(err => {
+      return err
+    })
+    if (rs.error) {
+      return this.failRequest(rs)
+    }
+    const qids = []
+    const questions = []
+    JSON.parse(rs).htmls.filter(html => {
+      if (html.indexOf('data-type="Answer"') > 0) {
+        const $ = cheerio.load(html)
+        const $title = $('.title a')
+        const qid = getQidByUrl($title.attr('href'))
+        qids.push(qid)
+        const aid = $('meta[itemprop="answer-url-token"]').attr('content')
+        const $summary = $('.summary')
+        $summary.find('.toggle-expand').remove()
+        questions.push({
+          qid: qid,
+          title: $title.text(),
+          aid: aid,
+          answer: $summary.html(),
+          voters: $('.js-vote-count').text(),
+          comments: $('.js-toggleCommentBox').text().replace(' 条评论', '')
+        })
+      }
+    })
+    return {
+      success: true,
+      qids: qids,
+      questions: questions
+    }
+  },
   async quickSearch (cookie, token) {
-    const query = querystring.stringify({
+    const query = this.encode({
       token: token,
       max_matches: 10,
       use_similar: 0
-    }, null, null, {
-      encodeURIComponent: encodeURIComponent
     })
     const options = {
       url: `${zhihuRoot}/autocomplete?${query}`,
@@ -40,6 +84,11 @@ module.exports = {
     })
     if (rs.error) {
       return this.failRequest(rs)
+    } else {
+      return {
+        success: true,
+        data: rs
+      }
     }
   },
   async profile (cookie) {
@@ -159,7 +208,6 @@ module.exports = {
       },
       url: `${zhihuRoot}/node/ExploreAnswerListV2?params=${params}`
     }
-    console.log(options)
     const rs = await request(options).catch(err => {
       return err
     })

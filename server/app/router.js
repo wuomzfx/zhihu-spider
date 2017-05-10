@@ -19,6 +19,8 @@ router.get('/api/question', question.get)
 router.get('/api/question/stop/:qid', question.stop)
 router.get('/api/question/recrawling/:qid', question.reActive)
 router.get('/api/question/explore/:offset', question.explore)
+router.get('/api/question/quick-search', question.quickSearch)
+router.get('/api/question/search', question.search)
 
 router.get('/api/data/question/:qid', data.question)
 

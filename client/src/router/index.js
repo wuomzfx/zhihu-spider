@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/components/Home'
 import Explore from '@/components/Explore'
+import Search from '@/components/Search'
 import Data from '@/components/Data'
 import Login from '@/components/Login'
 
@@ -23,6 +24,11 @@ export default new Router({
       path: '/explore',
       name: 'Explore',
       component: Explore
+    },
+    {
+      path: '/search',
+      name: 'Search',
+      component: Search
     },
     {
       path: '/data/:qid',

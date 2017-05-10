@@ -1,6 +1,7 @@
 <template>
   <mu-paper id="footer">
       <mu-bottom-nav :value="$route.name">
+        <mu-bottom-nav-item value="Search" title="Search" to="/search" icon="search"/>
         <mu-bottom-nav-item value="Home" title="Home" to="/" icon="home"/>
         <mu-bottom-nav-item value="Explore" title="Explore" to="/explore" icon="explore"/>
       </mu-bottom-nav>

@@ -17,4 +17,5 @@ module.exports.handleError = (err) => {
     throw err
   }
   window.console.log(res)
+  throw err
 }

@@ -1,4 +1,5 @@
 const service = require('../service/question')
+const spider = require('../service/spider')
 const App = require('./app')
 const getQidByUrl = (url) => {
   try {
@@ -9,6 +10,15 @@ const getQidByUrl = (url) => {
   }
 }
 class Question extends App {
+  async search (ctx) {
+    const query = ctx.request.query
+    super.result(ctx, await service.search(ctx.authInfo.cookie, query))
+  }
+  async quickSearch (ctx) {
+    const { token } = ctx.request.query
+    const rs = await spider.quickSearch(ctx.authInfo.cookie, token)
+    super.result(ctx, rs)
+  }
   async create (ctx) {
     let { qid, url } = ctx.request.body
     if (!qid && !url) {

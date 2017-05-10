@@ -50,7 +50,7 @@ export default {
         this.loginToken = false
         if (rs.data.success && rs.data.auth) {
           this.$api.setAnserAuth(rs.data.auth)
-          window.alert(rs.data.auth._id)
+          // window.alert(rs.data.auth._id)
           this.$router.push('/')
         }
       }).catch(() => {
@@ -58,7 +58,6 @@ export default {
       })
     },
     refreshCaptcha () {
-      document.querySelector('#captcha-image').src = ''
       document.querySelector('#captcha-image').src = this.$api.getCaptcha()
     },
     buildInfo (rs) {
