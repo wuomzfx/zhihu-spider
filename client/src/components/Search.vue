@@ -42,17 +42,11 @@ export default {
     search (query) {
       window.setTimeout(() => {
         if (query === this.query.q) {
+          this.query.offset = 0
+          this.questions = []
           this.searchAct()
         }
       }, 500)
-    },
-    renderSearch (data) {
-      this.quickSearchData = data.map(d => {
-        if (typeof (d) === Array && d[0] === 'question') {
-          return d
-        }
-      })
-      this.showQuickSearch = true
     },
     isContinue () {
       if (this.offset === 0) return
