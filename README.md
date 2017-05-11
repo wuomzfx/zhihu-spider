@@ -12,8 +12,9 @@
 2. cd client && npm run dev
 
 ### 线上
-1. cd server && npm start
-2. cd client && npm run build
+1. /client/config/index.js 中设置好线上server地址
+2. cd server && npm start
+3. cd client && npm run build
 
 ## 注意与声明
 **此系统仅作学习与个人使用！**
