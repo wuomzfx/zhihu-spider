@@ -43,4 +43,7 @@ const Question = new mongoose.Schema({
     default: false
   }
 })
+
+Question.index({ userId: 1, qid: 1 }, { unique: true })
+
 module.exports = mongoose.model('Question', Question)
