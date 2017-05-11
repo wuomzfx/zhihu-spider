@@ -88,8 +88,9 @@ module.exports = {
       expiredTime: new Date(+new Date() + 7 * 24 * 60 * 60 * 1000)
     })
   },
-  async richQuestions (data) {
+  async richQuestions (data, userId) {
     const qs = await QuestionModel.find({
+      userId: userId,
       qid: {$in: data.qids}
     }).exec()
     const qsMap = {}
@@ -105,18 +106,18 @@ module.exports = {
     })
     return data
   },
-  async search (cookie, params) {
-    const data = await spiderService.search(cookie, params)
+  async search (authInfo, params) {
+    const data = await spiderService.search(authInfo.cookie, params)
     if (!data.success) {
       return data
     }
-    return this.richQuestions(data)
+    return this.richQuestions(data, authInfo._id)
   },
-  async explore (cookie, offset = 0, type = 'day') {
-    const data = await spiderService.explore(cookie, offset)
+  async explore (authInfo, offset = 0, type = 'day') {
+    const data = await spiderService.explore(authInfo.cookie, offset)
     if (!data.success) {
       return data
     }
-    return this.richQuestions(data)
+    return this.richQuestions(data, authInfo._id)
   }
 }

@@ -12,7 +12,7 @@ const getQidByUrl = (url) => {
 class Question extends App {
   async search (ctx) {
     const query = ctx.request.query
-    super.result(ctx, await service.search(ctx.authInfo.cookie, query))
+    super.result(ctx, await service.search(ctx.authInfo, query))
   }
   async quickSearch (ctx) {
     const { token } = ctx.request.query
@@ -59,7 +59,7 @@ class Question extends App {
   }
   async explore (ctx) {
     const { offset } = ctx.params
-    super.result(ctx, await service.explore(ctx.authInfo.cookie, offset))
+    super.result(ctx, await service.explore(ctx.authInfo, offset))
   }
 }
 module.exports = new Question()
