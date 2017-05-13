@@ -50,6 +50,9 @@ export default {
 .question .mu-item-title {
   line-height: 1.4;
 }
+.question .mu-item-title a{
+  color: rgba(0, 0, 0, 0.87);
+}
 .question .overview > span {
   line-height: 16px;
   display: inline-block;

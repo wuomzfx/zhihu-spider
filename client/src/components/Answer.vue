@@ -37,7 +37,7 @@ export default {
 .question.has-answer .mu-item {
   border-bottom: 1px solid #f5f5f5;
 }
-.question .mu-item-title a{
+.question.has-answer .mu-item-title a{
   color: #259;
 }
 .answer-summary {
