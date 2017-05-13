@@ -1,12 +1,14 @@
 <template>
-  <mu-list-item :title="question.title"
-                :disableRipple="true"
+  <mu-list-item :disableRipple="true"
                 class="question"
                 @click.native="showData(question)">
+    <div class="mu-item-title" slot="title">
+      <a :href="quetsionUrl" @click.stop="() => {}">{{question.title}}</a>
+    </div>
     <div class="overview">
-      <span class="star"><mu-icon :size="16" value="star"/>{{question.data.followers}}</span>
-      <span class="answer"><mu-icon :size="16" value="question_answer"/>{{question.data.answers}}</span>
-      <span class="reader"><mu-icon :size="16" value="remove_red_eye"/>{{question.data.readers}}</span>
+      <span class="star"><mu-icon :size="16" value="star"/><i>{{question.data.followers}}</i></span>
+      <span class="answer"><mu-icon :size="16" value="question_answer"/><i>{{question.data.answers}}</i></span>
+      <span class="reader"><mu-icon :size="16" value="remove_red_eye"/><i>{{question.data.readers}}</i></span>
     </div>
     <div class="control" slot="right">
       <mu-raised-button label="取消"
@@ -21,30 +23,17 @@
 </template>
 
 <script>
+import mixin from './QuestionMixin'
 export default {
-  props: ['question'],
+  mixins: [mixin],
+  data () {
+    return {
+      quetsionUrl: `https://www.zhihu.com/question/${this.question.qid}`
+    }
+  },
   methods: {
     showData (question) {
       if (question._id) this.$router.push(`/data/${question.qid}`)
-    },
-    stopCrawling (q, e) {
-      e.stopPropagation()
-      this.$api.stopCrawling(q.qid).then(rs => {
-        q.status = 0
-      })
-    },
-    addQuestion (q, e) {
-      e.stopPropagation()
-      this.$api.addQuestion(q).then(rs => {
-        q.status = 1
-      })
-    },
-    reCrawling (q, e) {
-      if (!q._id) return this.addQuestion(q, e)
-      e.stopPropagation()
-      this.$api.reCrawling(q.qid).then(rs => {
-        q.status = 1
-      })
     }
   }
 }
@@ -67,9 +56,13 @@ export default {
   color: #666;
   margin: 10px 15px 0 0;
 }
-.question .overview > span > * {
+.question .overview > span > i {
   vertical-align: top;
   margin-right: 2px;
+  font-style: normal;
+}
+.question .overview .mu-icon {
+  margin-top: -1px;
 }
 .question .control .mu-raised-button {
   width: 60px;

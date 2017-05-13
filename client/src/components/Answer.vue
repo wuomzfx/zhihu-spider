@@ -6,8 +6,8 @@
     </div>
     <div class="answer-summary" v-html="question.answer"></div>
     <div class="overview">
-      <span class="vote"><mu-icon :size="16" value="thumb_up"/>{{question.voters}}</span>
-      <span class="comment"><mu-icon :size="16" value="comment"/>{{question.comments}}</span>
+      <span class="vote"><mu-icon :size="16" value="thumb_up"/><i>{{question.voters}}</i></span>
+      <span class="comment"><mu-icon :size="16" value="comment"/><i>{{question.comments}}</i></span>
       <div class="control">
         <mu-raised-button label="取消"
                           @click.native="stopCrawling(question, $event)"
@@ -22,33 +22,12 @@
 </template>
 
 <script>
+import mixin from './QuestionMixin'
 export default {
-  props: ['question'],
-  computed: {
-    answerUrl () {
-      return `https://www.zhihu.com/question/${this.question.qid}/answer/${this.question.aid}`
-    }
-  },
-  methods: {
-    stopCrawling (q, e) {
-      e.stopPropagation()
-      this.$api.stopCrawling(q.qid).then(rs => {
-        q.status = 0
-      })
-    },
-    addQuestion (q, e) {
-      e.stopPropagation()
-      this.$api.addQuestion(q).then(rs => {
-        q._id = rs.data.question._id
-        q.status = 1
-      })
-    },
-    reCrawling (q, e) {
-      if (!q._id) return this.addQuestion(q, e)
-      e.stopPropagation()
-      this.$api.reCrawling(q.qid).then(rs => {
-        q.status = 1
-      })
+  mixins: [mixin],
+  data () {
+    return {
+      answerUrl: `https://www.zhihu.com/question/${this.question.qid}/answer/${this.question.aid}`
     }
   }
 }
@@ -58,7 +37,7 @@ export default {
 .question.has-answer .mu-item {
   border-bottom: 1px solid #f5f5f5;
 }
-.question.has-answer .mu-item-title a{
+.question .mu-item-title a{
   color: #259;
 }
 .answer-summary {
@@ -71,5 +50,11 @@ export default {
 }
 .question.has-answer  .overview > span {
   margin-top: 13px;
+}
+.question .vote .mu-icon {
+  color: #2196f3;
+}
+.question .comment .mu-icon {
+  /*color: #2196f3;*/
 }
 </style>
