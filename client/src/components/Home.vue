@@ -8,7 +8,6 @@
         <question v-for="q in questions" :key="q._id" :question='q'>
         </question>
       </mu-list>
-      <mu-raised-button label="更新" @click="update()"/>
       <mu-infinite-scroll :scroller="scroller" :loading="loadToken" @load="loadMore" loadingText="loading" :class="{noMore: noMore}">
       </mu-infinite-scroll>
     </div>
@@ -97,7 +96,6 @@ export default {
   mounted () {
     this.scroller = document.querySelector('.app-content')
     this.getQuestion()
-    this.getProfile()
   }
 }
 </script>

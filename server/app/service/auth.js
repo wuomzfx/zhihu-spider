@@ -67,14 +67,22 @@ module.exports = {
   async upsertAuth (params, headers) {
     const cookieData = this.buildCookie(headers['set-cookie'])
     const userInfo = await spider.getUserInfo(cookieData.data)
-    const cond = this.getCondByParams(params)
-    const rs = await AuthModel.findOneAndUpdate(cond, {
-      phone: params.phone_num,
-      email: params.email,
+    if (!userInfo.success || !userInfo.data.uid) {
+      return false
+    }
+    const cond = {
+      uid: userInfo.data.uid
+    }
+    const newAuth = {
+      uid: userInfo.data.uid,
+      name: userInfo.data.name,
       cookie: cookieData.data,
       expiredTime: cookieData.expires,
       lastLoginTime: new Date()
-    }, {
+    }
+    if (params.phone_num) newAuth.phone_num = params.phone_num
+    if (params.email) newAuth.email = params.email
+    const rs = await AuthModel.findOneAndUpdate(cond, newAuth, {
       upsert: true,
       setDefaultsOnInsert: true,
       new: true
@@ -83,12 +91,8 @@ module.exports = {
   },
   getCondByParams (params) {
     const cond = {}
-    if (params.phone_num) {
-      cond.phone = params.phone_num
-    }
-    if (params.email) {
-      cond.email = params.email
-    }
+    if (params.phone_num) cond.phone = params.phone_num
+    if (params.email) cond.email = params.email
     return cond
   },
   async isLogined (params) {

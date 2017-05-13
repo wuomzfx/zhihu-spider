@@ -42,5 +42,5 @@ const Auth = new mongoose.Schema({
     required: true,
     default: Date.now
   }
-}, {strict: false})
+})
 module.exports = mongoose.model('Auth', Auth)
