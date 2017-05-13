@@ -186,9 +186,11 @@ module.exports = {
       return judge
     }
     const NumberBoard = $('.NumberBoard-item .NumberBoard-value')
+    const $title = $('.QuestionHeader-title')
+    $title.find('button').remove()
     return {
       success: true,
-      title: $('.QuestionHeader-title').remove('button').text(),
+      title: $title.text(),
       data: {
         qid: qid,
         followers: Number($(NumberBoard[0]).text()),
