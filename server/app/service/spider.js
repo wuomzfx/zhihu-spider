@@ -20,6 +20,35 @@ module.exports = {
       msg: rs.message
     }
   },
+  async getUserInfo (cookie) {
+    const options = {
+      url: `${zhihuRoot}/people/edit`,
+      method: 'GET',
+      headers: {
+        'Cookie': cookie
+      }
+    }
+    const rs = await request(options).catch(err => {
+      return err
+    })
+    if (rs.error) {
+      return this.failRequest(rs)
+    }
+    const $ = cheerio.load(rs)
+    const judge = this.judgeLoad($)
+    if (!judge.success) {
+      return judge
+    }
+    const data = $('#data').data('state')
+    const userInfo = data.entities.users[data.currentUser]
+    return {
+      success: true,
+      data: {
+        name: userInfo.name,
+        uid: userInfo.uid
+      }
+    }
+  },
   encode (params) {
     return querystring.stringify(params, null, null, {
       encodeURIComponent: encodeURIComponent
@@ -29,6 +58,7 @@ module.exports = {
     const query = this.encode(data)
     const options = {
       url: `${zhihuRoot}/r/search?${query}`,
+      method: 'GET',
       headers: {
         'Cookie': cookie
       }
@@ -74,6 +104,7 @@ module.exports = {
     })
     const options = {
       url: `${zhihuRoot}/autocomplete?${query}`,
+      method: 'GET',
       headers: {
         'Cookie': cookie,
         'Accept-Encoding': 'deflate, sdch, br'
@@ -94,6 +125,7 @@ module.exports = {
   async profile (cookie) {
     const options = {
       url: `https://www.zhihu.com/`,
+      method: 'GET',
       headers: {
         'Cookie': cookie,
         'Accept-Encoding': 'deflate, sdch, br'
@@ -105,12 +137,6 @@ module.exports = {
     if (rs.error) {
       return this.failRequest(rs)
     }
-    // const $ = cheerio.load(rs)
-    // const judge = this.judgeLoad($)
-    // if (!judge.success) {
-    //   return judge
-    // }
-    // console.log(rs)
     return {
       success: true,
       data: rs
@@ -133,6 +159,7 @@ module.exports = {
     const time = Date.now()
     const options = {
       encoding: null,
+      method: 'GET',
       url: `${zhihuRoot}/captcha.gif?r=${time}&type=login`
     }
     return request(options, (err, res, body) => {
@@ -169,6 +196,7 @@ module.exports = {
   async getData (cookie, qid) {
     const options = {
       url: `${zhihuRoot}/question/${qid}`,
+      method: 'GET',
       headers: {
         'Cookie': cookie,
         'Accept-Encoding': 'deflate, sdch, br' // 不允许gzip,开启gzip会开启知乎客户端渲染，导致无法爬取
@@ -208,6 +236,7 @@ module.exports = {
       headers: {
         'Cookie': cookie
       },
+      method: 'GET',
       url: `${zhihuRoot}/node/ExploreAnswerListV2?params=${params}`
     }
     const rs = await request(options).catch(err => {

@@ -96,5 +96,8 @@ export default {
     return instance.get(`${url.question}/search`, {
       params: query
     })
+  },
+  update () {
+    return instance.get(`${url.auth}/update`)
   }
 }

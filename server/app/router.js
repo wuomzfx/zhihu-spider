@@ -12,6 +12,7 @@ router.get('/api/profile/get', profile.getInfo)
 
 router.get('/api/auth/init-login', auth.initLogin)
 router.get('/api/auth/captcha.gif', auth.captcha)
+router.get('/api/auth/update', auth.updateInfo)
 router.post('/api/auth/login', auth.login)
 
 router.post('/api/question', question.create)

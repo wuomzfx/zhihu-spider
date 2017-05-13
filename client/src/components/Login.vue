@@ -3,7 +3,7 @@
     <mu-paper class="login-box" :zDepth="1">
       <div class="title">知乎帐号</div>
       <div class="form">
-        <mu-text-field hintText="手机号" v-model="loginInfo.phone_num" fullWidth/>
+        <mu-text-field hintText="手机号或邮箱" v-model="account" fullWidth/>
         <mu-text-field hintText="密码" v-model="loginInfo.password" type="password" fullWidth/>
         <div class="captcha">
           <mu-flexbox>
@@ -30,6 +30,7 @@
 export default {
   data () {
     return {
+      account: '',
       loginToken: false,
       loginInfo: {
         _xsrf: '',
@@ -43,9 +44,19 @@ export default {
     this.initLogin()
   },
   methods: {
+    getLoginInfo () {
+      delete this.loginInfo.phone_num
+      delete this.loginInfo.email
+      if (this.account.indexOf('@') >= 0) {
+        this.loginInfo.email = this.account
+      } else {
+        this.loginInfo.phone_num = this.account
+      }
+    },
     login () {
       if (this.loginToken) return
       this.loginToken = true
+      this.getLoginInfo()
       this.$api.login(this.loginInfo).then(rs => {
         this.loginToken = false
         if (rs.data.success && rs.data.auth) {

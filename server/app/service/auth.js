@@ -1,5 +1,6 @@
 const request = require('request-promise-native')
 const AuthModel = require('../model/auth')
+const spider = require('./spider')
 const config = require('../config')
 const zhihuRoot = config.zhihu.root
 
@@ -40,12 +41,36 @@ module.exports = {
       expires: date
     }
   },
-  async upsertAuth (phone, headers) {
+  async updateUserInfo (auth) {
+    const rs = await spider.getUserInfo(auth.cookie)
+    if (!rs.success) {
+      return rs
+    }
+    const update = await this.updateAuth(auth._id, rs.data)
+    if (update) {
+      return {
+        success: true,
+        data: update
+      }
+    } else {
+      return {
+        success: false,
+        msg: '更新失败'
+      }
+    }
+  },
+  async updateAuth (authId, data) {
+    return AuthModel.findOneAndUpdate({
+      _id: authId
+    }, data, { new: true })
+  },
+  async upsertAuth (params, headers) {
     const cookieData = this.buildCookie(headers['set-cookie'])
-    const rs = await AuthModel.findOneAndUpdate({
-      phone: phone
-    }, {
-      phone: phone,
+    const userInfo = await spider.getUserInfo(cookieData.data)
+    const cond = this.getCondByParams(params)
+    const rs = await AuthModel.findOneAndUpdate(cond, {
+      phone: params.phone_num,
+      email: params.email,
       cookie: cookieData.data,
       expiredTime: cookieData.expires,
       lastLoginTime: new Date()
@@ -56,9 +81,37 @@ module.exports = {
     })
     return rs
   },
+  getCondByParams (params) {
+    const cond = {}
+    if (params.phone_num) {
+      cond.phone = params.phone_num
+    }
+    if (params.email) {
+      cond.email = params.email
+    }
+    return cond
+  },
+  async isLogined (params) {
+    const rs = await AuthModel.findOne(this.getCondByParams(params))
+    if (rs && rs.expiredTime > new Date()) {
+      return {
+        success: true,
+        auth: rs
+      }
+    } else {
+      return {
+        success: false
+      }
+    }
+  },
   async login (params, cookie) {
+    const isLogined = await this.isLogined(params)
+    if (isLogined.success) {
+      return isLogined
+    }
+    const url = params.email ? 'email' : 'phone_num'
     const options = {
-      url: `${zhihuRoot}/login/phone_num`,
+      url: `${zhihuRoot}/login/${url}`,
       form: params,
       headers: {
         'Origin': zhihuRoot,

@@ -1,5 +1,14 @@
 const mongoose = require('mongoose')
 const Auth = new mongoose.Schema({
+  uid: {
+    type: String,
+    unique: true,
+    required: true
+  },
+  name: {
+    type: String,
+    required: true
+  },
   phone: {
     type: String,
     unique: true,
@@ -33,5 +42,5 @@ const Auth = new mongoose.Schema({
     required: true,
     default: Date.now
   }
-})
+}, {strict: false})
 module.exports = mongoose.model('Auth', Auth)
