@@ -188,7 +188,7 @@ module.exports = {
     const NumberBoard = $('.NumberBoard-item .NumberBoard-value')
     return {
       success: true,
-      title: $('.QuestionHeader-title').text(),
+      title: $('.QuestionHeader-title').remove('button').text(),
       data: {
         qid: qid,
         followers: Number($(NumberBoard[0]).text()),
