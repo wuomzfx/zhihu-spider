@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import Home from '@/components/Home'
 import Explore from '@/components/Explore'
 import Search from '@/components/Search'
-import Data from '@/components/Data'
+import Data from '@/components/data/Index'
 import Login from '@/components/Login'
 
 Vue.use(Router)

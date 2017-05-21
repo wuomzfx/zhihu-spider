@@ -1,9 +1,8 @@
 <template>
-  <div class="data-page">
-    <mu-appbar :title="question.title"></mu-appbar>
-    <div id="chart-box">
-      <canvas id="chart" width="375" height="400"></canvas>
-    </div>
+  <div id="chart-box">
+    <canvas id="chart-number" width="375" height="400"></canvas>
+    <!-- <canvas id="chart-increment" width="375" height="400"></canvas>
+    <canvas id="chart-rate" width="375" height="400"></canvas> -->
   </div>
 </template>
 
@@ -11,19 +10,32 @@
 import Chart from 'chart.js'
 import moment from 'moment'
 export default {
-  props: ['title'],
+  props: {
+    data: Array
+  },
   data () {
     return {
-      question: {},
-      qData: [],
       color: {
         readers: '75,192,192', // 绿色
         answers: '30,150,243', // 蓝色
         followers: '255,167,38' // 橙色
-      }
+      },
+      labels: [], // 时间横坐标
+      dimension: ['readers', 'answers', 'followers'],
+      chartsName: ['number'],
+      chartData: {}
     }
   },
   methods: {
+    initChartData () {
+      this.chartsName.forEach(name => {
+        this.chartData[name] = {
+          readers: [],
+          answers: [],
+          followers: []
+        }
+      })
+    },
     getLineConfig (label, data) {
       this.colorIdx ++
       return {
@@ -42,42 +54,39 @@ export default {
         // pointBackgroundColor: '#fff'
       }
     },
-    getData () {
-      this.$api.questionData(this.$route.params.qid).then(rs => {
-        this.question = rs.data.question
-        this.qData = rs.data.data
-        this.renderData()
-      })
-    },
-    renderData () {
-      const ctx = document.getElementById('chart')
-      const labels = []
-      const fieldData = {
-        readers: [],
-        answers: [],
-        followers: []
-      }
-      const fields = Object.keys(fieldData)
-      this.qData.forEach((d, k) => {
-        labels.push(d.createTime)
-        fields.forEach(f => {
-          fieldData[f].push(d[f])
+    buildData (material) {
+      material.forEach((d, k) => {
+        this.labels.push(d.createTime)
+        this.dimension.forEach(f => {
+          this.chartData.number[f].push(d[f])
+          // this.chartData.increment[f].push(d.increment[f])
+          // this.chartData.rate[f].push(d.increaseRate[f])
         })
       })
-      const datasets = fields.map(f => {
-        return this.getLineConfig(f, fieldData[f])
+      this.chartsName.forEach(name => {
+        this.chartData[name] = this.dimension.map(f => {
+          return this.getLineConfig(f, this.chartData[name][f])
+        })
       })
+    },
+    render (datasets, name) {
+      const ctx = document.getElementById(`chart-${name}`)
       const data = {
-        labels: labels,
+        labels: this.labels,
         datasets: datasets
       }
       new Chart(ctx, {
         type: 'line',
         data: data,
-        options: this.buildChartOption(fields)
+        options: this.buildChartOption(this.dimension, name)
       })
     },
-    buildChartOption (fields) {
+    renderChart () {
+      for (const name in this.chartData) {
+        this.render(this.chartData[name], name)
+      }
+    },
+    buildChartOption (fields, boxName) {
       const yAxes = fields.map(id => {
         const config = {
           display: true,
@@ -120,7 +129,7 @@ export default {
         title: {
           display: true,
           padding: 20,
-          text: '数据图'
+          text: boxName
         },
         legend: {
           labels: {
@@ -147,7 +156,9 @@ export default {
     }
   },
   mounted () {
-    this.getData()
+    this.initChartData()
+    this.buildData(this.data)
+    this.renderChart()
   }
 }
 </script>

@@ -1,6 +1,6 @@
 const spiderService = require('./spider')
 const QuestionModel = require('../model/question')
-const DataModel = require('../model/data')
+const dataService = require('../service/data')
 
 module.exports = {
   async get (page, size, cond = {}) {
@@ -13,19 +13,7 @@ module.exports = {
                               .lean()
                               .exec()
     const qids = qs.map(q => q.qid)
-    const data = await DataModel.aggregate([
-      { $match: {
-        qid: {$in: qids}
-      }},
-      { $sort: {createTime: -1} },
-      { $group: {
-        _id: '$qid',
-        followers: {$first: '$followers'},
-        readers: {$first: '$readers'},
-        answers: {$first: '$answers'},
-        createTime: {$first: '$createTime'}
-      }}
-    ]).exec()
+    const data = await dataService.getGroupData(qids)
     const dataMap = {}
     data.forEach(d => {
       dataMap[d._id] = d
@@ -54,7 +42,7 @@ module.exports = {
       title: title
     }
     const q = new QuestionModel(question)
-    const d = new DataModel(data)
+    const d = await dataService.create(data)
     try {
       const que = (await q.save()).toObject()
       const qData = await d.save()

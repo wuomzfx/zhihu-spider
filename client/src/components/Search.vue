@@ -46,7 +46,7 @@ export default {
           this.questions = []
           this.searchAct()
         }
-      }, 500)
+      }, 700)
     },
     isContinue () {
       if (this.offset === 0) return
