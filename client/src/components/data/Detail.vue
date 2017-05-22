@@ -1,6 +1,6 @@
 <template>
   <div class="detail-data">
-      <h3>平均每天数据</h3>
+      <h3>平均每小时数据</h3>
       <mu-table :showCheckbox="false">
         <mu-thead>
           <mu-th>维度</mu-th>
@@ -29,7 +29,7 @@ export default {
   },
   data () {
     return {
-      dayInterval: 1000 * 60 * 60 * 24
+      dayInterval: 1000 * 60 * 60
     }
   },
   methods: {

@@ -1,8 +1,8 @@
 <template>
   <div id="chart-box">
     <canvas id="chart-number" width="375" height="400"></canvas>
-    <!-- <canvas id="chart-increment" width="375" height="400"></canvas>
-    <canvas id="chart-rate" width="375" height="400"></canvas> -->
+    <canvas id="chart-increment" width="375" height="400"></canvas>
+    <canvas id="chart-rate" width="375" height="400"></canvas>
   </div>
 </template>
 
@@ -22,8 +22,13 @@ export default {
       },
       labels: [], // 时间横坐标
       dimension: ['readers', 'answers', 'followers'],
-      chartsName: ['number'],
+      chartsName: ['number', 'increment', 'rate'],
       chartData: {}
+    }
+  },
+  computed: {
+    dataLength () {
+      return this.data.length - 1
     }
   },
   methods: {
@@ -54,13 +59,28 @@ export default {
         // pointBackgroundColor: '#fff'
       }
     },
-    buildData (material) {
+    getIncrement (dimension, index) {
+      if (index === 0) {
+        return 0
+      }
+      return this.data[dimension]
+    },
+    buildData () {
+      const material = this.data
       material.forEach((d, k) => {
         this.labels.push(d.createTime)
         this.dimension.forEach(f => {
           this.chartData.number[f].push(d[f])
-          // this.chartData.increment[f].push(d.increment[f])
-          // this.chartData.rate[f].push(d.increaseRate[f])
+          if (k === this.dataLength) {
+            this.chartData.increment[f].push(0)
+            this.chartData.rate[f].push(0)
+          } else {
+            const prevData = material[k + 1]
+            const increment = d[f] - prevData[f]
+            // const interval = (moment(d.createTime).toDate() - moment(prevData.createTime).toDate()) / 1000 / 60 / 60
+            this.chartData.increment[f].push(increment)
+            this.chartData.rate[f].push(increment / prevData[f] * 100)
+          }
         })
       })
       this.chartsName.forEach(name => {
@@ -157,7 +177,7 @@ export default {
   },
   mounted () {
     this.initChartData()
-    this.buildData(this.data)
+    this.buildData()
     this.renderChart()
   }
 }

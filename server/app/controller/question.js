@@ -51,11 +51,11 @@ class Question extends App {
   }
   async stop (ctx) {
     const { qid } = ctx.params
-    ctx.body = await service.stop(qid)
+    ctx.body = await service.stop(qid, ctx.header.authorization)
   }
   async reActive (ctx) {
     const { qid } = ctx.params
-    ctx.body = await service.reActive(qid)
+    ctx.body = await service.reActive(qid, ctx.header.authorization)
   }
   async explore (ctx) {
     const { offset } = ctx.params
