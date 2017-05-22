@@ -59,17 +59,19 @@ module.exports = {
       }
     }
   },
-  async stop (qid) {
+  async stop (qid, userId) {
     return QuestionModel.findOne({
-      qid: qid
+      qid: qid,
+      userId: userId
     }).update({
       status: 0,
       updateTime: new Date()
     })
   },
-  async reActive (qid) {
+  async reActive (qid, userId) {
     return QuestionModel.findOne({
-      qid: qid
+      qid: qid,
+      userId: userId
     }).update({
       status: 1,
       updateTime: new Date(),
