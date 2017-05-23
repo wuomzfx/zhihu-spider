@@ -79,7 +79,7 @@ export default {
             const increment = d[f] - prevData[f]
             // const interval = (moment(d.createTime).toDate() - moment(prevData.createTime).toDate()) / 1000 / 60 / 60
             this.chartData.increment[f].push(increment)
-            this.chartData.rate[f].push(increment / prevData[f] * 100)
+            this.chartData.rate[f].push((increment / prevData[f] * 100).toFixed(2))
           }
         })
       })
@@ -140,11 +140,11 @@ export default {
               return moment(item[0].xLabel).format('YYYY-MM-DD HH:mm')
             }
           },
-          intersect: false
+          intersect: true
         },
         hover: {
           mode: 'nearest',
-          intersect: true
+          intersect: false
         },
         title: {
           display: true,
