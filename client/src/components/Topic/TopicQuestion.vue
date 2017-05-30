@@ -29,7 +29,7 @@ export default {
   },
   data () {
     return {
-      quetsionUrl: `https://www.zhihu.com/question/${this.question.qid}/answer/${this.question.aid}`
+      quetsionUrl: `https://www.zhihu.com/question/${this.question.qid}`
     }
   }
 }
