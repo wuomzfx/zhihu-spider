@@ -108,7 +108,8 @@ module.exports = {
     const topics = []
     $('.zm-topic-cat-item').each((k, topic) => {
       topics.push({
-        id: $(topic).data('id'),
+        topicId: $(topic).data('id'),
+        urlToken: Number($(topic).data('href').replace('/topic/', '')),
         name: $(topic).text()
       })
     })

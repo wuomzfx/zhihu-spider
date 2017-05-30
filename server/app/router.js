@@ -29,6 +29,8 @@ router.get('/api/data/question/:qid', data.question)
 
 router.get('/api/topic/get', topic.get)
 router.post('/api/topic/hot/:topicId', topic.hot)
+router.post('/api/topic/follow', topic.follow)
+
 router.get('/api/auth/email/send', email.sendAct)
 
 module.exports = router

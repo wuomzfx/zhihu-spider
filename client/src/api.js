@@ -106,6 +106,9 @@ export default {
       offset: offset
     })
   },
+  followTopic (topic) {
+    return instance.post(`${url.topic}/follow`, topic)
+  },
   update () {
     return instance.get(`${url.auth}/update`)
   }

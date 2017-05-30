@@ -2,14 +2,12 @@
 <div class="topic-list">
   <loading-box v-if="loading"></loading-box>
   <mu-raised-button v-for="topic in topics"
-                    :key="topic.id"
+                    :key="topic.topicId"
+                    :backgroundColor="bgColor(topic)"
                     :label="topic.name"
                     :to="{
                       name: 'TopicContent',
-                      params: {
-                        id: topic.id,
-                        name: topic.name
-                      }
+                      params: topic
                     }"
                     class="topic"/>
 </div>
@@ -24,15 +22,28 @@ export default {
   data () {
     return {
       loading: true,
+      follows: [],
       topics: []
     }
   },
+  computed: {
+    mapFollows () {
+      const data = {}
+      this.follows.forEach(f => {
+        data[f] = true
+      })
+      return data
+    }
+  },
   methods: {
+    bgColor (topic) {
+      return this.mapFollows[topic.topicId] ? '#2196f3' : ''
+    },
     getTopics () {
       this.$api.getTopics().then(rs => {
         this.loading = false
-        window.console.log(rs)
-        this.topics = rs.data.topics
+        this.follows = rs.data.follows
+        this.topics = rs.data.topics.topics
       })
     }
   },

@@ -5,6 +5,11 @@ const config = require('../config')
 const zhihuRoot = config.zhihu.root
 
 module.exports = {
+  async get (userId) {
+    return AuthModel.findOne({
+      _id: userId
+    })
+  },
   async check (userId) {
     const err = {
       success: false,
@@ -15,9 +20,7 @@ module.exports = {
     if (!userId) {
       return err
     }
-    const auth = await AuthModel.findOne({
-      _id: userId
-    })
+    const auth = await this.get(userId)
     if (auth && auth.cookie && auth.expiredTime > new Date()) {
       return {
         success: true,
@@ -156,5 +159,10 @@ module.exports = {
       success: true,
       data: rs
     }
+  },
+  updateTopic (userId, topics) {
+    return AuthModel.findOneAndUpdate({
+      _id: userId
+    }, { topics }, { new: true })
   }
 }

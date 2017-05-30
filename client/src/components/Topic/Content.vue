@@ -1,13 +1,17 @@
 <template>
 <div class="topic-content">
-  <div class="question-list app-content">
+  <loading-box v-if="loading"></loading-box>
+  <div class="question-list app-content" v-else>
+    <div class="header">
+      <span>当前热门问答</span>
+      <mu-switch label="推送" class="push-switch" @click.native="follow"/>
+    </div>
     <mu-list>
       <topic-question v-for="topic in topics"
                       key="topic.qid"
                       class="topic"
                       :question="topic"></topic-question>
     </mu-list>
-    <loading-box v-if="loading"></loading-box>
   </div>
 </div>
 </template>
@@ -26,10 +30,16 @@ export default {
       questions: [],
       topics: [],
       getTimes: 0,
-      limit: 2
+      limit: 1
     }
   },
   methods: {
+    follow () {
+      const topic = this.$route.params
+      this.$api.followTopic(topic).then(rs => {
+        window.console.log(rs)
+      })
+    },
     getTopicHot (topicId, offset) {
       return new Promise((resolve, reject) => {
         this.$api.getTopicHot(topicId, offset).then(rs => {
@@ -74,7 +84,7 @@ export default {
       return hot.map(h => this.buildTopic(h))
     },
     getHot () {
-      const topicId = this.$route.params.id
+      const topicId = this.$route.params.topicId
       const offset = Math.ceil(Date.now() / 1000)
       this.getTopicHot(topicId, offset).then(rs => {
         this.loading = false
@@ -90,4 +100,13 @@ export default {
 </script>
 
 <style>
+.topic-content .header{
+  border-bottom: 1px solid #f5f5f5;
+  padding: 20px 16px;
+  font-size: 14px;
+  color: #777;
+}
+.topic-content .push-switch {
+  float: right;
+}
 </style>

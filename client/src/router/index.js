@@ -37,7 +37,7 @@ export default new Router({
         name: 'TopicList',
         component: TopicList
       }, {
-        path: 'content/:name/:id',
+        path: 'content/:name/:topicId/:urlToken',
         name: 'TopicContent',
         component: TopicContent
       }]

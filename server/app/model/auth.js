@@ -31,6 +31,10 @@ const Auth = new mongoose.Schema({
     required: true,
     default: 1
   },
+  topics: {
+    type: Array,
+    default: []
+  },
   createTime: {
     type: Date,
     required: true,

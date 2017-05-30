@@ -25,7 +25,7 @@ import mixin from '../QuestionMixin'
 export default {
   mixins: [mixin],
   mounted () {
-    window.console.log(this.question)
+    // window.console.log(this.question)
   },
   data () {
     return {

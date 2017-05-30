@@ -1,5 +1,6 @@
 const spiderService = require('./spider')
 const QuestionModel = require('../model/question')
+const HotQuestionModel = require('../model/hot_question')
 const dataService = require('../service/data')
 
 module.exports = {
@@ -116,5 +117,43 @@ module.exports = {
       return data
     }
     return this.richQuestions(data, authInfo._id)
+  },
+  async upsertHotQuestion (question, topicId) {
+    const cond = {
+      qid: question.qid,
+      topicId: topicId
+    }
+    const data = {
+      topicId: topicId,
+      updateTime: new Date(),
+      times: question.times,
+      title: question.title,
+      pushed: false,
+      $inc: {
+        totalTimes: question.times
+      }
+    }
+    return HotQuestionModel.findOneAndUpdate(cond, data, {
+      upsert: true,
+      setDefaultsOnInsert: true,
+      new: true
+    })
+  },
+  async getUnpushHotQuestion (topics) {
+    const cond = {
+      topicId: {$in: topics},
+      pushed: false
+    }
+    return HotQuestionModel.find(cond)
+  },
+  async pushedHotQuestion (topics) {
+    const cond = {
+      topicId: {$in: topics},
+      pushed: false
+    }
+    return HotQuestionModel.update(cond, {
+      pushed: true,
+      updateTime: new Date()
+    })
   }
 }
