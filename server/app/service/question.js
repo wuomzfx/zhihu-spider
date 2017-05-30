@@ -109,5 +109,12 @@ module.exports = {
       return data
     }
     return this.richQuestions(data, authInfo._id)
+  },
+  async topicHot (authInfo, topicId, offset) {
+    const data = await spiderService.getTopicHot(authInfo.cookie, topicId, offset)
+    if (!data.success) {
+      return data
+    }
+    return this.richQuestions(data, authInfo._id)
   }
 }

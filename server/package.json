@@ -11,6 +11,7 @@
     "koa2-cors": "2.0.3",
     "mongoose": "4.9.6",
     "node-schedule": "1.2.1",
+    "nodemailer": "4.0.1",
     "path": "0.12.7",
     "request": "2.81.0",
     "request-promise-native": "1.0.3"

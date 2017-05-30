@@ -5,6 +5,10 @@ const Auth = new mongoose.Schema({
     unique: true,
     required: true
   },
+  urlToken: {
+    type: String,
+    required: true
+  },
   name: {
     type: String,
     required: true

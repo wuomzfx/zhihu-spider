@@ -30,11 +30,12 @@ const setAuthorization = () => {
 setAuthorization()
 
 const url = {
-  profile: `/profile`,
-  explore: `/question/explore`,
-  auth: `/auth`,
-  question: `/question`,
-  qData: `/data/question`
+  profile: '/profile',
+  explore: '/question/explore',
+  topic: '/topic',
+  auth: '/auth',
+  question: '/question',
+  qData: '/data/question'
 }
 export default {
   profile () {
@@ -95,6 +96,14 @@ export default {
   search (query) {
     return instance.get(`${url.question}/search`, {
       params: query
+    })
+  },
+  getTopics () {
+    return instance.get(`${url.topic}/get`)
+  },
+  getTopicHot (topicId, offset) {
+    return instance.post(`${url.topic}/hot/${topicId}`, {
+      offset: offset
     })
   },
   update () {

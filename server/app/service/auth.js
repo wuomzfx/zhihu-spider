@@ -73,13 +73,11 @@ module.exports = {
     const cond = {
       uid: userInfo.data.uid
     }
-    const newAuth = {
-      uid: userInfo.data.uid,
-      name: userInfo.data.name,
+    const newAuth = Object.assign(userInfo.data, {
       cookie: cookieData.data,
       expiredTime: cookieData.expires,
       lastLoginTime: new Date()
-    }
+    })
     if (params.phone_num) newAuth.phone_num = params.phone_num
     if (params.email) newAuth.email = params.email
     const rs = await AuthModel.findOneAndUpdate(cond, newAuth, {

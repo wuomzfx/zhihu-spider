@@ -5,6 +5,9 @@ import Explore from '@/components/Explore'
 import Search from '@/components/Search'
 import Data from '@/components/data/Index'
 import Login from '@/components/Login'
+import Topic from '@/components/Topic/Index'
+import TopicList from '@/components/Topic/List'
+import TopicContent from '@/components/Topic/Content'
 
 Vue.use(Router)
 
@@ -24,6 +27,20 @@ export default new Router({
       path: '/explore',
       name: 'Explore',
       component: Explore
+    },
+    {
+      path: '/topic',
+      name: 'Topic',
+      component: Topic,
+      children: [{
+        path: 'list',
+        name: 'TopicList',
+        component: TopicList
+      }, {
+        path: 'content/:name/:id',
+        name: 'TopicContent',
+        component: TopicContent
+      }]
     },
     {
       path: '/search',

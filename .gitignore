@@ -4,3 +4,4 @@ dist/
 npm-debug*
 db/
 client/config/index.js
+server/app/config/email.js

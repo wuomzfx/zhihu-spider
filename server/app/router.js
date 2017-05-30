@@ -4,6 +4,8 @@ const data = require('./controller/data')
 const question = require('./controller/question')
 const auth = require('./controller/auth')
 const profile = require('./controller/profile')
+const topic = require('./controller/topic')
+const email = require('./service/email')
 
 // router.get('/', action.index)
 // router.get('/spider', action.spider)
@@ -24,5 +26,9 @@ router.get('/api/question/quick-search', question.quickSearch)
 router.get('/api/question/search', question.search)
 
 router.get('/api/data/question/:qid', data.question)
+
+router.get('/api/topic/get', topic.get)
+router.post('/api/topic/hot/:topicId', topic.hot)
+router.get('/api/auth/email/send', email.sendAct)
 
 module.exports = router

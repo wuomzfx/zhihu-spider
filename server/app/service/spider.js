@@ -2,6 +2,7 @@ const request = require('request-promise-native')
 // request = request.defaults({'proxy': 'http://127.0.0.1:1080'})// 走本地代理做测试
 const querystring = require('querystring')
 const cheerio = require('cheerio')
+const authService = require('../service/auth')
 const config = require('../config')
 const zhihuRoot = config.zhihu.root
 const getQidByUrl = (url) => {
@@ -13,6 +14,127 @@ const getQidByUrl = (url) => {
   }
 }
 module.exports = {
+  request (options) {
+    return request(options).catch(err => {
+      return err
+    })
+  },
+  getQueByHtml ($, $title) {
+    const qid = getQidByUrl($title.attr('href'))
+    const aid = $('meta[itemprop="answer-url-token"]').attr('content')
+    const $summary = $('.summary')
+    $summary.find('.toggle-expand').remove()
+    $summary.find('img').remove()
+    const comments = $('.js-toggleCommentBox').text().replace(' 条评论', '').replace(/\n/g, '')
+    return {
+      qid: qid,
+      title: $title.text().replace(/\n/g, ''),
+      aid: aid,
+      answer: ($summary.html() || '').replace(/\n/g, ''),
+      voters: $('.js-vote-count').text(),
+      comments: comments === '添加评论' ? 0 : comments,
+      timestamp: $('.feed-item').data('score')
+    }
+  },
+  async getTopicToken (cookie, topicId) {
+    const options = {
+      url: `${zhihuRoot}/topic/${topicId}/hot`,
+      method: 'GET',
+      headers: {
+        'Cookie': cookie
+      }
+    }
+    let res
+    let rs = await request(options).on('response', function (response) {
+      res = response
+    }).catch(err => {
+      return err
+    })
+    if (rs.error) {
+      return this.failRequest(rs)
+    }
+    const $ = cheerio.load(rs)
+    const cookieData = authService.buildCookie(res.headers['set-cookie'])
+    return {
+      success: true,
+      token: $('input[name=_xsrf]').val(),
+      cookie: cookieData.data
+    }
+  },
+  async getTopicHot (cookie, topicId, offset) {
+    const options = {
+      url: `https://www.zhihu.com/node/TopicFeedList`,
+      method: 'POST',
+      headers: {
+        // 'Cookie': cookie
+      },
+      formData: {
+        method: 'next',
+        params: `{"offset":${offset},"topic_id":${topicId},"feed_type":"timeline_feed"}`
+      }
+    }
+    const rs = await this.request(options)
+    if (rs.error) {
+      return this.failRequest(rs)
+    }
+    const qids = []
+    const questions = []
+    JSON.parse(rs).msg.forEach(html => {
+      const $ = cheerio.load(html)
+      const $title = $('.question_link')
+      const r = this.getQueByHtml($, $title)
+      qids.push(r.qid)
+      questions.push(r)
+    })
+    return {
+      success: true,
+      qids: qids,
+      questions: questions
+    }
+  },
+  async getTopics (auth) {
+    const options = {
+      url: `${zhihuRoot}/topic`,
+      method: 'GET',
+      headers: {
+        'Cookie': auth.cookie
+      }
+    }
+    const rs = await this.request(options)
+    if (rs.error) {
+      return this.failRequest(rs)
+    }
+    const $ = cheerio.load(rs)
+    const topics = []
+    $('.zm-topic-cat-item').each((k, topic) => {
+      topics.push({
+        id: $(topic).data('id'),
+        name: $(topic).text()
+      })
+    })
+    return {
+      success: true,
+      topics: topics
+    }
+  },
+  async getTopics2 (auth) {
+    const options = {
+      url: `${zhihuRoot}/api/v4/members/${auth.urlToken}/following-topic-contributions?limit=200`,
+      method: 'GET',
+      headers: {
+        'Cookie': auth.cookie
+      }
+    }
+    const rs = await this.request(options)
+    if (rs.error) {
+      return this.failRequest(rs)
+    } else {
+      return {
+        success: true,
+        data: JSON.parse(rs)
+      }
+    }
+  },
   failRequest (rs) {
     return {
       success: false,
@@ -28,9 +150,7 @@ module.exports = {
         'Cookie': cookie
       }
     }
-    const rs = await request(options).catch(err => {
-      return err
-    })
+    const rs = await this.request(options)
     if (rs.error) {
       return this.failRequest(rs)
     }
@@ -44,6 +164,7 @@ module.exports = {
     return {
       success: true,
       data: {
+        urlToken: data.currentUser,
         name: userInfo.name,
         uid: userInfo.uid
       }
@@ -63,9 +184,7 @@ module.exports = {
         'Cookie': cookie
       }
     }
-    const rs = await request(options).catch(err => {
-      return err
-    })
+    const rs = await this.request(options)
     if (rs.error) {
       return this.failRequest(rs)
     }
@@ -75,19 +194,9 @@ module.exports = {
       if (html.indexOf('data-type="Answer"') > 0) {
         const $ = cheerio.load(html)
         const $title = $('.title a')
-        const qid = getQidByUrl($title.attr('href'))
-        qids.push(qid)
-        const aid = $('meta[itemprop="answer-url-token"]').attr('content')
-        const $summary = $('.summary')
-        $summary.find('.toggle-expand').remove()
-        questions.push({
-          qid: qid,
-          title: $title.text(),
-          aid: aid,
-          answer: $summary.html(),
-          voters: $('.js-vote-count').text(),
-          comments: $('.js-toggleCommentBox').text().replace(' 条评论', '')
-        })
+        const r = this.getQueByHtml($, $title)
+        qids.push(r.qid)
+        questions.push(r)
       }
     })
     return {
@@ -110,9 +219,7 @@ module.exports = {
         'Accept-Encoding': 'deflate, sdch, br'
       }
     }
-    const rs = await request(options).catch(err => {
-      return err
-    })
+    const rs = await this.request(options)
     if (rs.error) {
       return this.failRequest(rs)
     } else {
@@ -131,9 +238,7 @@ module.exports = {
         'Accept-Encoding': 'deflate, sdch, br'
       }
     }
-    const rs = await request(options).catch(err => {
-      return err
-    })
+    const rs = await this.request(options)
     if (rs.error) {
       return this.failRequest(rs)
     }
@@ -202,9 +307,7 @@ module.exports = {
         'Accept-Encoding': 'deflate, sdch, br' // 不允许gzip,开启gzip会开启知乎客户端渲染，导致无法爬取
       }
     }
-    const rs = await request(options).catch(err => {
-      return err
-    })
+    const rs = await this.request(options)
     if (rs.error) {
       return this.failRequest(rs)
     }
@@ -239,9 +342,7 @@ module.exports = {
       method: 'GET',
       url: `${zhihuRoot}/node/ExploreAnswerListV2?params=${params}`
     }
-    const rs = await request(options).catch(err => {
-      return err
-    })
+    const rs = await this.request(options)
     if (rs.error) {
       return this.failRequest(rs)
     }
