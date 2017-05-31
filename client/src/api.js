@@ -109,7 +109,13 @@ export default {
   followTopic (topic) {
     return instance.post(`${url.topic}/follow`, topic)
   },
+  unfollowTopic (topicId) {
+    return instance.get(`${url.topic}/unfollow/${topicId}`)
+  },
   update () {
     return instance.get(`${url.auth}/update`)
+  },
+  getUser () {
+    return instance.get(`${url.auth}/get`)
   }
 }

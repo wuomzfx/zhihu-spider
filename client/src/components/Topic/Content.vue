@@ -4,7 +4,7 @@
   <div class="question-list app-content" v-else>
     <div class="header">
       <span>当前热门问答</span>
-      <mu-switch label="推送" class="push-switch" @click.native="follow"/>
+      <mu-switch label="推送" class="push-switch" @change="followChange" :value="followed"/>
     </div>
     <mu-list>
       <topic-question v-for="topic in topics"
@@ -30,10 +30,29 @@ export default {
       questions: [],
       topics: [],
       getTimes: 0,
-      limit: 1
+      limit: 3,
+      userTopics: []
+    }
+  },
+  computed: {
+    topicId () {
+      return Number(this.$route.params.topicId)
+    },
+    followed () {
+      return this.userTopics.find(t => t === this.topicId) && true
     }
   },
   methods: {
+    followChange (value) {
+      if (value) {
+        this.follow()
+      } else {
+        this.unfollow()
+      }
+    },
+    unfollow () {
+      this.$api.unfollowTopic(this.topicId)
+    },
     follow () {
       const topic = this.$route.params
       this.$api.followTopic(topic).then(rs => {
@@ -84,17 +103,26 @@ export default {
       return hot.map(h => this.buildTopic(h))
     },
     getHot () {
-      const topicId = this.$route.params.topicId
       const offset = Math.ceil(Date.now() / 1000)
-      this.getTopicHot(topicId, offset).then(rs => {
+      this.getTopicHot(this.topicId, offset).then(rs => {
         this.loading = false
         this.topics = this.buildTopics(rs)
         window.console.log(this.topics)
       })
+    },
+    getUser () {
+      return this.$api.getUser().then(rs => {
+        window.console.log(rs)
+        this.userTopics = rs.data.user.topics
+        return rs
+      })
     }
   },
   mounted () {
-    this.getHot()
+    this.getUser().then(() => {
+      // this.loading = false
+      this.getHot()
+    })
   }
 }
 </script>

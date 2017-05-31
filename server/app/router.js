@@ -16,6 +16,7 @@ router.get('/api/auth/init-login', auth.initLogin)
 router.get('/api/auth/captcha.gif', auth.captcha)
 router.get('/api/auth/update', auth.updateInfo)
 router.post('/api/auth/login', auth.login)
+router.get('/api/auth/get', auth.get)
 
 router.post('/api/question', question.create)
 router.get('/api/question', question.get)
@@ -30,6 +31,7 @@ router.get('/api/data/question/:qid', data.question)
 router.get('/api/topic/get', topic.get)
 router.post('/api/topic/hot/:topicId', topic.hot)
 router.post('/api/topic/follow', topic.follow)
+router.get('/api/topic/unfollow/:topicId', topic.cancelFollow)
 
 router.get('/api/auth/email/send', email.sendAct)
 

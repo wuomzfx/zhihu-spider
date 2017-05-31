@@ -16,6 +16,11 @@ class Auth extends App {
       super.result(ctx, rs)
     }
   }
+  async get (ctx, next) {
+    const user = await authService.get(ctx.header.authorization)
+
+    super.result(ctx, {user: user})
+  }
   async login (ctx) {
     const params = ctx.request.body
     let rs = await authService.login(params, ctx.header.cookie)

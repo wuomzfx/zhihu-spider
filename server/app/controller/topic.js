@@ -19,22 +19,39 @@ class Topic extends App {
   }
   async follow (ctx) {
     const follows = ctx.authInfo.topics
-    follows.push(ctx.request.body.topicId)
+    follows.push(Number(ctx.request.body.topicId))
     // const follows = []
     const r1 = await topicService.upsert(ctx.request.body)
-    if (!r1) super.error(ctx, 'update fail')
+    if (!r1) {
+      super.error(ctx, 'update fail')
+      return
+    }
     const r2 = await authService.updateTopic(ctx.authInfo._id, follows)
-    if (!r2) super.error(ctx, 'update fail')
+    if (!r2) {
+      super.error(ctx, 'update fail')
+      return
+    }
     super.result(ctx, r2.topics)
   }
   async cancelFollow (ctx) {
     const follows = ctx.authInfo.topics
-    const index = follows.findIndex((f, idx) => f === ctx.params.topicId)
+    const topicId = Number(ctx.params.topicId)
+    const index = follows.findIndex(f => f === topicId)
+    if (index < 0) {
+      super.error(ctx, '本来就没关注啦')
+      return
+    }
     follows.splice(index, 1)
     const r1 = await topicService.upsert(ctx.request.body)
-    if (!r1) super.error(ctx, 'update fail')
-    const r2 = await authService.reduceFollows(ctx.authInfo._id, follows)
-    if (!r2) super.error(ctx, 'update fail')
+    if (!r1) {
+      super.error(ctx, 'update fail')
+      return
+    }
+    const r2 = await authService.updateTopic(ctx.authInfo._id, follows)
+    if (!r2) {
+      super.error(ctx, 'update fail')
+      return
+    }
     super.result(ctx, r2.topics)
   }
 }
