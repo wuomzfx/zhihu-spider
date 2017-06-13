@@ -2,7 +2,6 @@ const request = require('request-promise-native')
 // request = request.defaults({'proxy': 'http://127.0.0.1:1080'})// 走本地代理做测试
 const querystring = require('querystring')
 const cheerio = require('cheerio')
-const authService = require('../service/auth')
 const config = require('../config')
 const zhihuRoot = config.zhihu.root
 const getQidByUrl = (url) => {
@@ -37,29 +36,29 @@ module.exports = {
     }
   },
   async getTopicToken (cookie, topicId) {
-    const options = {
-      url: `${zhihuRoot}/topic/${topicId}/hot`,
-      method: 'GET',
-      headers: {
-        'Cookie': cookie
-      }
-    }
-    let res
-    let rs = await request(options).on('response', function (response) {
-      res = response
-    }).catch(err => {
-      return err
-    })
-    if (rs.error) {
-      return this.failRequest(rs)
-    }
-    const $ = cheerio.load(rs)
-    const cookieData = authService.buildCookie(res.headers['set-cookie'])
-    return {
-      success: true,
-      token: $('input[name=_xsrf]').val(),
-      cookie: cookieData.data
-    }
+    // const options = {
+    //   url: `${zhihuRoot}/topic/${topicId}/hot`,
+    //   method: 'GET',
+    //   headers: {
+    //     'Cookie': cookie
+    //   }
+    // }
+    // let res
+    // let rs = await request(options).on('response', function (response) {
+    //   res = response
+    // }).catch(err => {
+    //   return err
+    // })
+    // if (rs.error) {
+    //   return this.failRequest(rs)
+    // }
+    // const $ = cheerio.load(rs)
+    // const cookieData = authService.buildCookie(res.headers['set-cookie'])
+    // return {
+    //   success: true,
+    //   token: $('input[name=_xsrf]').val(),
+    //   cookie: cookieData.data
+    // }
   },
   async getTopicHot (cookie, topicId, offset) {
     const options = {
