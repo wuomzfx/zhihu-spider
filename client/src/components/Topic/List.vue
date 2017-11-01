@@ -40,10 +40,17 @@ export default {
       return this.mapFollows[topic.topicId] ? '#2196f3' : ''
     },
     getTopics () {
+      // 有点恶心，没有vuex，故存在全局变量
+      if (window.userTopics) {
+        this.loading = false
+        this.topics = window.userTopics.topics
+        this.follows = window.userTopics.follows
+      }
       this.$api.getTopics().then(rs => {
         this.loading = false
+        window.userTopics = rs.data
         this.follows = rs.data.follows
-        this.topics = rs.data.topics.topics
+        this.topics = rs.data.topics
       })
     }
   },

@@ -7,7 +7,7 @@ const App = require('./app')
 class Topic extends App {
   async get (ctx) {
     const data = {
-      topics: await spiderService.getTopics(ctx.authInfo),
+      topics: (await spiderService.getTopics(ctx.authInfo)).topics,
       follows: ctx.authInfo.topics
     }
     super.result(ctx, data)

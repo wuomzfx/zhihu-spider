@@ -30,7 +30,7 @@ export default {
       questions: [],
       topics: [],
       getTimes: 0,
-      limit: 3,
+      limit: 2,
       userTopics: []
     }
   },

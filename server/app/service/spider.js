@@ -298,6 +298,12 @@ module.exports = {
       success: true
     }
   },
+  async getQuesData (cookie, qids) {
+    const data = qids.map(qid => {
+      return this.getData(cookie, qid)
+    })
+    return Promise.all(data)
+  },
   async getData (cookie, qid) {
     const options = {
       url: `${zhihuRoot}/question/${qid}`,
