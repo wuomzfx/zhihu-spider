@@ -117,9 +117,9 @@ module.exports = {
       topics: topics
     }
   },
-  async getTopics2 (auth) {
+  async getTopicsByApi (auth) {
     const options = {
-      url: `${zhihuRoot}/api/v4/members/${auth.urlToken}/following-topic-contributions?limit=200`,
+      url: `${zhihuRoot}/followed_topics?offset=0&limit=100`,
       method: 'GET',
       headers: {
         'Cookie': auth.cookie
@@ -128,11 +128,15 @@ module.exports = {
     const rs = await this.request(options)
     if (rs.error) {
       return this.failRequest(rs)
-    } else {
-      return {
-        success: true,
-        data: JSON.parse(rs)
-      }
+    }
+    const { payload = [] } = JSON.parse(rs)
+    return {
+      success: true,
+      topics: payload.map(t => ({
+        topicId: t.id,
+        urlToken: Number(t.url_token),
+        name: t.name
+      }))
     }
   },
   failRequest (rs) {
