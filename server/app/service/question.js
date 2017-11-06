@@ -154,6 +154,8 @@ module.exports = {
     return HotQuestionModel.update(cond, {
       pushed: true,
       updateTime: new Date()
+    }, {
+      multi: true
     })
   }
 }
