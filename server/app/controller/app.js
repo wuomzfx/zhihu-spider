@@ -1,42 +1,38 @@
-const handleHeaders = (ctx, result) => {
-  if (result.headers['set-cookie']) {
-    result.headers['set-cookie'].forEach(r => {
-      const cookie = r.split(';')[0]
-      const name = cookie.split('=')[0]
-      const value = cookie.replace(`${name}=`, '')
-      ctx.cookies.set(name, value)
-    })
-  }
-  delete result.headers
-}
 class App {
-  result (ctx, result) {
+  result (result) {
     if (result.status) {
-      ctx.status = result.status
+      this.ctx.status = result.status
     }
     if (result.headers) {
-      handleHeaders(ctx, result)
+      this.handleHeaders(result.headers)
     }
-    ctx.body = result
+    this.ctx.body = result
   }
-  deleteCookie (ctx) {
-    if (!ctx.header.cookie) return
-    ctx.header.cookie.split('; ').forEach(cookie => {
+  deleteCookie () {
+    if (!this.ctx.header.cookie) return
+    this.ctx.header.cookie.split('; ').forEach(cookie => {
       const name = cookie.split('=')[0]
-      ctx.cookies.set(name, null)
+      this.ctx.cookies.set(name, null)
     })
   }
-  handleHeaders (ctx, result) {
-    return handleHeaders(ctx, result)
+  handleHeaders (headers) {
+    if (headers['set-cookie']) {
+      headers['set-cookie'].forEach(r => {
+        const cookie = r.split(';')[0]
+        const name = cookie.split('=')[0]
+        const value = cookie.replace(`${name}=`, '')
+        this.ctx.cookies.set(name, value)
+      })
+    }
   }
-  success (ctx, data) {
-    ctx.body = {
+  success (data) {
+    this.ctx.body = {
       success: true,
       data: data
     }
   }
-  error (ctx, error) {
-    ctx.body = {
+  error (error) {
+    this.ctx.body = {
       success: false,
       msg: error
     }

@@ -12,26 +12,25 @@ const getQidByUrl = (url) => {
 class Question extends App {
   async search (ctx) {
     const query = ctx.request.query
-    super.result(ctx, await service.search(ctx.authInfo, query))
+    super.result(await service.search(ctx.authInfo, query))
   }
   async quickSearch (ctx) {
     const { token } = ctx.request.query
     const rs = await spider.quickSearch(ctx.authInfo.cookie, token)
-    super.result(ctx, rs)
+    super.result(rs)
   }
   async create (ctx) {
     let { qid, url } = ctx.request.body
     if (!qid && !url) {
-      super.error(ctx, '别瞎填')
+      super.error('别瞎填')
       return
     }
     qid = qid | getQidByUrl(url)
     if (!qid) {
-      super.error(ctx, 'url错误')
+      super.error('url错误')
       return
     }
-    // super.error(ctx, '反正就是错了')
-    super.result(ctx, await service.add(ctx.authInfo, qid))
+    super.result(await service.add(ctx.authInfo, qid))
   }
   async get (ctx) {
     let {page = 1, size = 10, status = 1} = ctx.request.query
@@ -59,7 +58,7 @@ class Question extends App {
   }
   async explore (ctx) {
     const { offset } = ctx.params
-    super.result(ctx, await service.explore(ctx.authInfo, offset))
+    super.result(await service.explore(ctx.authInfo, offset))
   }
 }
 module.exports = new Question()

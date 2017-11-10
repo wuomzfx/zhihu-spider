@@ -10,29 +10,39 @@ const email = require('./service/email')
 // router.get('/', action.index)
 // router.get('/spider', action.spider)
 
-router.get('/api/profile/get', profile.getInfo)
+const routerMap = [
+  ['get', '/api/profile/get', profile, 'getInfo'],
 
-router.get('/api/auth/init-login', auth.initLogin)
-router.get('/api/auth/captcha.gif', auth.captcha)
-router.get('/api/auth/update', auth.updateInfo)
-router.post('/api/auth/login', auth.login)
-router.get('/api/auth/get', auth.get)
+  ['get', '/api/auth/init-login', auth, 'initLogin'],
+  ['get', '/api/auth/captcha.gif', auth, 'captcha'],
+  ['get', '/api/auth/update', auth, 'updateInfo'],
+  ['post', '/api/auth/login', auth, 'login'],
+  ['get', '/api/auth/get', auth, 'get'],
 
-router.post('/api/question', question.create)
-router.get('/api/question', question.get)
-router.get('/api/question/stop/:qid', question.stop)
-router.get('/api/question/recrawling/:qid', question.reActive)
-router.get('/api/question/explore/:offset', question.explore)
-router.get('/api/question/quick-search', question.quickSearch)
-router.get('/api/question/search', question.search)
+  ['post', '/api/question', question, 'create'],
+  ['get', '/api/question', question, 'get'],
+  ['get', '/api/question/stop/:qid', question, 'stop'],
+  ['get', '/api/question/recrawling/:qid', question, 'reActive'],
+  ['get', '/api/question/explore/:offset', question, 'explore'],
+  ['get', '/api/question/quick-search', question, 'quickSearch'],
+  ['get', '/api/question/search', question, 'search'],
 
-router.get('/api/data/question/:qid', data.question)
+  ['get', '/api/data/question/:qid', data, 'question'],
 
-router.get('/api/topic/get', topic.get)
-router.post('/api/topic/hot/:topicId', topic.hot)
-router.post('/api/topic/follow', topic.follow)
-router.get('/api/topic/unfollow/:topicId', topic.cancelFollow)
+  ['get', '/api/topic/get', topic, 'get'],
+  ['post', '/api/topic/hot/:topicId', topic, 'hot'],
+  ['post', '/api/topic/follow', topic, 'follow'],
+  ['get', '/api/topic/unfollow/:topicId', topic, 'cancelFollow'],
 
-router.get('/api/auth/email/send', email.sendAct)
+  ['get', '/api/auth/email/send', email, 'sendAct']
+]
+
+routerMap.map(route => {
+  const [ method, path, controller, action ] = route
+
+  router[method](path, async (ctx, next) =>
+    controller[action].bind(Object.assign(controller, { ctx }))(ctx, next)
+  )
+})
 
 module.exports = router

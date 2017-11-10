@@ -10,12 +10,12 @@ class Topic extends App {
       topics: (await spiderService.getTopicsByApi(ctx.authInfo)).topics,
       follows: ctx.authInfo.topics
     }
-    super.result(ctx, data)
+    super.result(data)
   }
   async hot (ctx) {
     const { topicId } = ctx.params
     const { offset } = ctx.request.body
-    super.result(ctx, await questionService.topicHot(ctx.authInfo, topicId, offset))
+    super.result(await questionService.topicHot(ctx.authInfo, topicId, offset))
   }
   async follow (ctx) {
     const follows = ctx.authInfo.topics
@@ -23,36 +23,36 @@ class Topic extends App {
     // const follows = []
     const r1 = await topicService.upsert(ctx.request.body)
     if (!r1) {
-      super.error(ctx, 'update fail')
+      super.error('update fail')
       return
     }
     const r2 = await authService.updateTopic(ctx.authInfo._id, follows)
     if (!r2) {
-      super.error(ctx, 'update fail')
+      super.error('update fail')
       return
     }
-    super.result(ctx, r2.topics)
+    super.result(r2.topics)
   }
   async cancelFollow (ctx) {
     const follows = ctx.authInfo.topics
     const topicId = Number(ctx.params.topicId)
     const index = follows.findIndex(f => f === topicId)
     if (index < 0) {
-      super.error(ctx, '本来就没关注啦')
+      super.error('本来就没关注啦')
       return
     }
     follows.splice(index, 1)
     const r1 = await topicService.upsert(ctx.request.body)
     if (!r1) {
-      super.error(ctx, 'update fail')
+      super.error('update fail')
       return
     }
     const r2 = await authService.updateTopic(ctx.authInfo._id, follows)
     if (!r2) {
-      super.error(ctx, 'update fail')
+      super.error('update fail')
       return
     }
-    super.result(ctx, r2.topics)
+    super.result(r2.topics)
   }
 }
 module.exports = new Topic()

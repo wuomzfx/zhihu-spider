@@ -3,8 +3,8 @@ const DataModel = require('../model/data')
 const App = require('./app')
 
 class Data extends App {
-  async question (ctx) {
-    const { qid } = ctx.params
+  async question () {
+    const { qid } = this.ctx.params
     const question = await QuestionModel.findOne({
       qid: qid
     }).exec()
@@ -13,7 +13,7 @@ class Data extends App {
     }).sort({
       createTime: -1
     }).exec()
-    ctx.body = {question, data}
+    this.ctx.body = {question, data}
   }
 }
 module.exports = new Data()

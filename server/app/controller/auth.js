@@ -13,13 +13,13 @@ class Auth extends App {
       ctx.authInfo = rs.auth
       return next()
     } else {
-      super.result(ctx, rs)
+      super.result(rs)
     }
   }
   async get (ctx, next) {
     const user = await authService.get(ctx.header.authorization)
 
-    super.result(ctx, {user: user})
+    super.result({user: user})
   }
   async login (ctx) {
     const params = ctx.request.body
@@ -27,19 +27,19 @@ class Auth extends App {
     if (rs.success && !rs.auth) {
       rs.auth = await authService.upsertAuth(params, rs.headers)
     }
-    super.result(ctx, rs)
+    super.result(rs)
   }
   async initLogin (ctx) {
-    super.deleteCookie(ctx)
+    super.deleteCookie()
     ctx.body = {
       success: true
     }
     // 发现并不需要xsrf token
-    // super.result(ctx, await spider.initLogin())
+    // super.result(await spider.initLogin())
   }
   async updateInfo (ctx) {
     const rs = await authService.updateUserInfo(ctx.authInfo)
-    super.result(ctx, rs)
+    super.result(rs)
   }
   async captcha (ctx) {
     await spider.getCaptcha((err, res, body) => {
@@ -48,9 +48,7 @@ class Auth extends App {
           status: 500
         }
       }
-      super.handleHeaders(ctx, {
-        headers: res.headers
-      })
+      super.handleHeaders(res.headers)
       ctx.body = body
     })
   }
