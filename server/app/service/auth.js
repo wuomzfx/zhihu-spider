@@ -122,7 +122,8 @@ module.exports = {
         'Origin': zhihuRoot,
         'Host': 'www.zhihu.com',
         'Cookie': cookie,
-        'X-Xsrftoken': params._xsrf
+        'X-Xsrftoken': params._xsrf,
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'
       }
     }
     let res
