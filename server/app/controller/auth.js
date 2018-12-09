@@ -29,6 +29,14 @@ class Auth extends App {
     }
     super.result(rs)
   }
+  async loginByCookie (ctx) {
+    const params = ctx.request.body
+    const auth = await authService.upsertAuth(params)
+    super.result({
+      auth,
+      success: true
+    })
+  }
   async initLogin (ctx) {
     super.deleteCookie()
     ctx.body = {

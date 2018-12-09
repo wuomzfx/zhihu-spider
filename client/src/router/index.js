@@ -8,6 +8,7 @@ import Login from '@/components/Login'
 import Topic from '@/components/Topic/Index'
 import TopicList from '@/components/Topic/List'
 import TopicContent from '@/components/Topic/Content'
+import Fans from '@/components/Fans'
 
 Vue.use(Router)
 
@@ -27,6 +28,11 @@ export default new Router({
       path: '/explore',
       name: 'Explore',
       component: Explore
+    },
+    {
+      path: '/fans',
+      name: 'Fans',
+      component: Fans
     },
     {
       path: '/topic',

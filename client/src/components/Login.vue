@@ -3,6 +3,7 @@
     <mu-paper class="login-box" :zDepth="1">
       <div class="title">知乎帐号</div>
       <div class="form">
+        <mu-text-field hintText="cookie" v-model="cookie" fullWidth/>
         <mu-text-field hintText="手机号或邮箱" v-model="account" fullWidth/>
         <mu-text-field hintText="密码" v-model="loginInfo.password" type="password" fullWidth/>
         <div class="captcha">
@@ -30,6 +31,7 @@
 export default {
   data () {
     return {
+      cookie: '',
       account: '',
       loginToken: false,
       loginInfo: {
@@ -55,6 +57,7 @@ export default {
     },
     login () {
       if (this.loginToken) return
+      if (this.cookie) return this.loginByCookie()
       this.loginToken = true
       this.getLoginInfo()
       this.$api.login(this.loginInfo).then(rs => {
@@ -62,6 +65,18 @@ export default {
         if (rs.data.success && rs.data.auth) {
           this.$api.setAnserAuth(rs.data.auth)
           // window.alert(rs.data.auth._id)
+          this.$router.push('/')
+        }
+      }).catch(() => {
+        this.loginToken = false
+      })
+    },
+    loginByCookie () {
+      this.loginToken = true
+      this.$api.login({ cookie: this.cookie }).then(rs => {
+        this.loginToken = false
+        if (rs.data.success && rs.data.auth) {
+          this.$api.setAnserAuth(rs.data.auth)
           this.$router.push('/')
         }
       }).catch(() => {

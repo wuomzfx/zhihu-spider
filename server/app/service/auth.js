@@ -68,7 +68,7 @@ module.exports = {
     }, data, { new: true })
   },
   async upsertAuth (params, headers) {
-    const cookieData = this.buildCookie(headers['set-cookie'])
+    const cookieData = this.buildCookie(params.cookie ? [params.cookie] : headers['set-cookie'])
     const userInfo = await spider.getUserInfo(cookieData.data)
     if (!userInfo.success || !userInfo.data.uid) {
       return false

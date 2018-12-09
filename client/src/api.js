@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {handleError} from './util'
+import { handleError } from './util'
 import config from '../config'
 
 const isProduction = process.env.NODE_ENV === 'production'
@@ -9,12 +9,15 @@ const instance = axios.create({
   baseURL: `${domain}/api`
 })
 
-instance.interceptors.response.use((response) => {
-  return response
-}, (error) => {
-  handleError(error)
-  return Promise.resolve({ error })
-})
+instance.interceptors.response.use(
+  response => {
+    return response
+  },
+  error => {
+    handleError(error)
+    return Promise.resolve({ error })
+  }
+)
 
 const setAuthorization = () => {
   try {
@@ -34,6 +37,7 @@ const url = {
   explore: '/question/explore',
   topic: '/topic',
   auth: '/auth',
+  fans: '/fans',
   question: '/question',
   qData: '/data/question'
 }
@@ -46,7 +50,7 @@ export default {
     setAuthorization()
   },
   questionList (query) {
-    return instance.get(url.question, {params: query})
+    return instance.get(url.question, { params: query })
   },
   addQuestion (question) {
     return instance.post(url.question, question)
@@ -86,6 +90,11 @@ export default {
       withCredentials: true
     })
   },
+  loginByCookie (params) {
+    return instance.post(`${url.auth}/loginByCookie`, params, {
+      withCredentials: true
+    })
+  },
   quickSearch (token) {
     return instance.get(`${url.question}/quick-search`, {
       params: {
@@ -117,5 +126,14 @@ export default {
   },
   getUser () {
     return instance.get(`${url.auth}/get`)
+  },
+  getFans (params) {
+    return instance.post(`${url.fans}/get`, params)
+  },
+  buildFans () {
+    return instance.get(`${url.fans}/build`)
+  },
+  richFans () {
+    return instance.get(`${url.fans}/rich`)
   }
 }

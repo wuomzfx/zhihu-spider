@@ -4,7 +4,7 @@ const querystring = require('querystring')
 const cheerio = require('cheerio')
 const config = require('../config')
 const zhihuRoot = config.zhihu.root
-const getQidByUrl = (url) => {
+const getQidByUrl = url => {
   try {
     const reg = /question\/(\d*)/
     return url.match(reg)[1]
@@ -24,7 +24,10 @@ module.exports = {
     const $summary = $('.summary')
     $summary.find('.toggle-expand').remove()
     $summary.find('img').remove()
-    const comments = $('.js-toggleCommentBox').text().replace(' 条评论', '').replace(/\n/g, '')
+    const comments = $('.js-toggleCommentBox')
+      .text()
+      .replace(' 条评论', '')
+      .replace(/\n/g, '')
     return {
       qid: qid,
       title: $title.text().replace(/\n/g, ''),
@@ -96,7 +99,7 @@ module.exports = {
       url: `${zhihuRoot}/topic`,
       method: 'GET',
       headers: {
-        'Cookie': auth.cookie
+        Cookie: auth.cookie
       }
     }
     const rs = await this.request(options)
@@ -108,7 +111,11 @@ module.exports = {
     $('.zm-topic-cat-item').each((k, topic) => {
       topics.push({
         topicId: $(topic).data('id'),
-        urlToken: Number($(topic).data('href').replace('/topic/', '')),
+        urlToken: Number(
+          $(topic)
+            .data('href')
+            .replace('/topic/', '')
+        ),
         name: $(topic).text()
       })
     })
@@ -122,7 +129,7 @@ module.exports = {
       url: `${zhihuRoot}/followed_topics?offset=0&limit=100`,
       method: 'GET',
       headers: {
-        'Cookie': auth.cookie
+        Cookie: auth.cookie
       }
     }
     const rs = await this.request(options)
@@ -151,7 +158,7 @@ module.exports = {
       url: `${zhihuRoot}/people/edit`,
       method: 'GET',
       headers: {
-        'Cookie': cookie
+        Cookie: cookie
       }
     }
     const rs = await this.request(options)
@@ -163,7 +170,7 @@ module.exports = {
     if (!judge.success) {
       return judge
     }
-    const data = $('#data').data('state')
+    const data = JSON.parse($('#js-initialData').text()).initialState
     const userInfo = data.entities.users[data.currentUser]
     return {
       success: true,
@@ -185,7 +192,7 @@ module.exports = {
       url: `${zhihuRoot}/r/search?${query}`,
       method: 'GET',
       headers: {
-        'Cookie': cookie
+        Cookie: cookie
       }
     }
     const rs = await this.request(options)
@@ -219,7 +226,7 @@ module.exports = {
       url: `${zhihuRoot}/autocomplete?${query}`,
       method: 'GET',
       headers: {
-        'Cookie': cookie,
+        Cookie: cookie,
         'Accept-Encoding': 'deflate, sdch, br'
       }
     }
@@ -238,7 +245,7 @@ module.exports = {
       url: `https://www.zhihu.com/`,
       method: 'GET',
       headers: {
-        'Cookie': cookie,
+        Cookie: cookie,
         'Accept-Encoding': 'deflate, sdch, br'
       }
     }
@@ -281,11 +288,13 @@ module.exports = {
       url: `${zhihuRoot}/#signin`
     }
     let res
-    const rs = await request(options).on('response', function (response) {
-      res = response
-    }).catch(err => {
-      return err
-    })
+    const rs = await request(options)
+      .on('response', function (response) {
+        res = response
+      })
+      .catch(err => {
+        return err
+      })
     if (rs.error) {
       return this.failRequest(rs)
     }
@@ -313,7 +322,7 @@ module.exports = {
       url: `${zhihuRoot}/question/${qid}`,
       method: 'GET',
       headers: {
-        'Cookie': cookie,
+        Cookie: cookie,
         'Accept-Encoding': 'deflate, sdch, br' // 不允许gzip,开启gzip会开启知乎客户端渲染，导致无法爬取
       }
     }
@@ -336,7 +345,11 @@ module.exports = {
         qid: qid,
         followers: Number($(NumberBoard[0]).text()),
         readers: Number($(NumberBoard[1]).text()),
-        answers: Number($('h4.List-headerText span').text().replace(' 个回答', ''))
+        answers: Number(
+          $('h4.List-headerText span')
+            .text()
+            .replace(' 个回答', '')
+        )
       }
     }
   },
@@ -347,7 +360,7 @@ module.exports = {
     })
     const options = {
       headers: {
-        'Cookie': cookie
+        Cookie: cookie
       },
       method: 'GET',
       url: `${zhihuRoot}/node/ExploreAnswerListV2?params=${params}`
@@ -380,13 +393,72 @@ module.exports = {
         aid: $el.find('.zm-item-answer').data('atoken'),
         answer: answer,
         voters: $el.find('.js-voteCount').text(),
-        comments: $el.find('.js-toggleCommentBox').text().replace(' 条评论', '')
+        comments: $el
+          .find('.js-toggleCommentBox')
+          .text()
+          .replace(' 条评论', '')
       })
     })
     return {
       success: true,
       qids: qids,
       questions: dataArr
+    }
+  },
+  async getFans ({ cookie, urlToken }, { offset = 0, limit = 20 } = {}) {
+    const query = this.encode({
+      include:
+        'data[*].answer_count,articles_count,gender,follower_count,is_followed,is_following,badge[?(type=best_answerer)].topics',
+      offset,
+      limit
+    })
+    const options = {
+      headers: {
+        Cookie: cookie
+      },
+      method: 'GET',
+      url: `${zhihuRoot}/api/v4/members/${urlToken}/followers?${query}`
+    }
+    const rs = await this.request(options)
+    return JSON.parse(rs)
+  },
+  async getFansData (cookie, urlToken) {
+    const options = {
+      headers: {
+        Cookie: cookie
+      },
+      method: 'GET',
+      url: `${zhihuRoot}/people/${urlToken}/activities`
+    }
+    const rs = await this.request(options)
+    if (rs.error) {
+      return this.failRequest(rs)
+    }
+    const $ = cheerio.load(rs)
+    const judge = this.judgeLoad($)
+    if (!judge.success) {
+      return judge
+    }
+    const voteAndThank = $('.FollowshipCard-link')
+    let voted = null
+    let thanked = null
+    for (let i = 0; i < voteAndThank.length; i++) {
+      if (voted !== null && thanked !== null) {
+        break
+      }
+      const $doc = $(voteAndThank[i])
+      if ($doc.parent().text().indexOf('赞同我') >= 0) {
+        voted = $doc.text().split('')[0] | 0
+        continue
+      }
+      if ($doc.parent().text().indexOf('感谢我') >= 0) {
+        thanked = $doc.text().split('')[0] | 0
+        continue
+      }
+    }
+    return {
+      voted: voted || 0,
+      thanked: thanked || 0
     }
   }
 }

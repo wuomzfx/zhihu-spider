@@ -5,6 +5,7 @@ const question = require('./controller/question')
 const auth = require('./controller/auth')
 const profile = require('./controller/profile')
 const topic = require('./controller/topic')
+const fans = require('./controller/fans')
 const email = require('./service/email')
 
 // router.get('/', action.index)
@@ -17,6 +18,7 @@ const routerMap = [
   ['get', '/api/auth/captcha.gif', auth, 'captcha'],
   ['get', '/api/auth/update', auth, 'updateInfo'],
   ['post', '/api/auth/login', auth, 'login'],
+  ['post', '/api/auth/loginByCookie', auth, 'loginByCookie'],
   ['get', '/api/auth/get', auth, 'get'],
 
   ['post', '/api/question', question, 'create'],
@@ -34,7 +36,12 @@ const routerMap = [
   ['post', '/api/topic/follow', topic, 'follow'],
   ['get', '/api/topic/unfollow/:topicId', topic, 'cancelFollow'],
 
-  ['get', '/api/auth/email/send', email, 'sendAct']
+  ['get', '/api/auth/email/send', email, 'sendAct'],
+
+  ['post', '/api/fans/get', fans, 'get'],
+  ['get', '/api/fans/build', fans, 'build'],
+  ['get', '/api/fans/rich', fans, 'rich']
+
 ]
 
 routerMap.map(route => {

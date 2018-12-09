@@ -5,6 +5,7 @@
         <mu-bottom-nav-item value="Home" title="Home" to="/" icon="home"/>
         <mu-bottom-nav-item value="Topic" title="Topic" to="/topic/list" icon="language"/>
         <mu-bottom-nav-item value="Explore" title="Explore" to="/explore" icon="explore"/>
+        <mu-bottom-nav-item value="Fans" title="Fans" to="/fans" icon="accessibility_new"/>
       </mu-bottom-nav>
   </mu-paper>
 </template>
